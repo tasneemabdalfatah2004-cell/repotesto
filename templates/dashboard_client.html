@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}لوحة العميل{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h2>مرحبًا {{ client_name }} (عميل)</h2>
+    <a href="{{ url_for('logout') }}">تسجيل خروج</a>
+
+    <h3>طلب تصميم جديد</h3>
+    <button>بدء المحادثة مع AI</button>
+
+    <h3>الطلبات الحالية</h3>
+    <ul>
+        {% for req in requests %}
+        <li>
+            {{ req.description }} - الحالة: {{ req.status }}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

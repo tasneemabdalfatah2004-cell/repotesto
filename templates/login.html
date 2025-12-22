@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}تسجيل الدخول{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <h2>تسجيل الدخول</h2>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flash-messages">
+          {% for msg in messages %}
+            <li>{{ msg }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+   
+    <form method="POST">
+        <input type="email" name="email" placeholder="البريد الإلكتروني" required>
+         <input type="password" id="password" name="password" placeholder="كلمة المرور" required>
+<span class="toggle-password" onclick="togglePassword()"></span>
+        <button type="submit">تسجيل الدخول</button>
+    </form>
+    <p>لا تملك حساب؟ <a href="{{ url_for('register') }}">إنشاء حساب</a></p>
+
+</div>
+{% endblock %}

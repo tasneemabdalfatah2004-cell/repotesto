@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}الطلبات{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <h2>الطلبات الأخيرة</h2>
+    {% for req in requests %}
+    <div class="request-card">
+        <h3>رقم العميل: {{ req.client_id }}</h3>
+        <p>{{ req.description }}</p>
+        <span>الحالة: {{ req.status }}</span>
+
+        <a href="{{ url_for('open_chat', request_id=req.id) }}"><button>فتح المحادثة</button></a>
+
+        {% if req.status != 'مكتمل' %}
+        <form action="{{ url_for('submit_design', request_id=req.id) }}" method="POST" style="display:inline;">
+            <button type="submit">تسليم التصميم</button>
+        </form>
+        {% else %}
+        <button disabled>تم التسليم</button>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

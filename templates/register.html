@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}إنشاء حساب{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <h2>إنشاء حساب جديد</h2>
+    <form method="POST">
+        <input type="text" name="username" placeholder="الاسم الكامل" required>
+        <input type="email" name="email" placeholder="البريد الإلكتروني" required>
+        <input type="password" id="password" name="password" placeholder="كلمة المرور" required>
+
+        <label>اختر الدور:</label>
+        <select name="role" required>
+            <option value="designer">مصمم</option>
+            <option value="client">عميل</option>
+        </select>
+        <button type="submit">إنشاء الحساب</button>
+    </form>
+    <p >لديك حساب؟ <a href="{{ url_for('login') }}">تسجيل الدخول</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}لوحة المصمم{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+
+    <!-- الشريط الجانبي -->
+    <aside class="sidebar">
+        <div class="logo">Designer Panel</div>
+        <ul>
+            <li><a href="{{ url_for('dashboard_designer') }}">🏠 لوحة التحكم</a></li>
+            <li><a href="{{ url_for('profile_designer') }}">👤 الملف الشخصي</a></li>
+            <li><a href="{{ url_for('add_design') }}">➕ إضافة عمل جديد</a></li>
+            <li><a href="{{ url_for('designer_requests') }}">📩 الطلبات</a></li>
+            <li><a href="{{ url_for('logout') }}">🔓 تسجيل خروج</a></li>
+        </ul>
+    </aside>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="main-content">
+        <!-- إحصائيات المصمم -->
+        <section class="stats">
+            <div class="card">
+                <h3>الطلبات المفتوحة</h3>
+                <p>{{ requests|selectattr('status','equalto','مفتوح')|list|length }}</p>
+            </div>
+            <div class="card">
+                <h3>الطلبات المكتملة</h3>
+                <p>{{ requests|selectattr('status','equalto','مكتمل')|list|length }}</p>
+            </div>
+            <div class="card">
+                <h3>عدد الأعمال</h3>
+                <p>{{ portfolio|length }}</p>
+            </div>
+        </section>
+
+        <!-- قسم الأعمال -->
+        <section class="portfolio-section">
+            <h2>أعمالي</h2>
+            <div class="portfolio-grid">
+                {% for work in portfolio %}
+                <div class="portfolio-card">
+                    <a href="{{ url_for('static', filename=work['image_path'].split('static/')[-1]) }}" target="_blank">
+                        <img src="{{ url_for('static', filename=work['image_path'].split('static/')[-1]) }}" alt="{{ work['title'] }}">
+                    </a>
+                    <h3>{{ work['title'] }}</h3>
+                    <p>{{ work['description'] }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- قسم الطلبات -->
+        <section class="requests-section">
+            <h2>الطلبات الأخيرة</h2>
+            {% for req in requests %}
+            <div class="request-card">
+                <div class="request-info">
+                    <h4>رقم العميل: {{ req['client_id'] }}</h4>
+                    <p>{{ req['description'] }}</p>
+                    <span>الحالة: {{ req['status'] }}</span>
+                </div>
+                <div class="request-actions">
+                    <a href="{{ url_for('open_chat', request_id=req['id']) }}"><button>فتح المحادثة</button></a>
+                    {% if req['status'] != 'مكتمل' %}
+                    <form action="{{ url_for('submit_design', request_id=req['id']) }}" method="POST">
+                        <button type="submit">تسليم التصميم</button>
+                    </form>
+                    {% else %}
+                    <button disabled>تم التسليم</button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+    </main>
+
+</div>
+{% endblock %}
