@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}مشروعي{% endblock %}</title>
+    <!-- ربط CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- رسائل الفلاش -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                <ul>
+                {% for msg in messages %}
+                    <li>{{ msg }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- المحتوى الرئيسي -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer بسيط -->
+    <footer>
+        <p>&copy; 2025 مشروعي</p>
+    </footer>
+
+</body>
+</html>

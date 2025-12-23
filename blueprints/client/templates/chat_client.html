@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}دردشة مع المصمم{% endblock %}
+
+{% block content %}
+<div class="client-chat">
+    <h2>دردشة الطلب: {{ request.description }}</h2>
+
+    <!-- محادثة مبدئية (يمكن ربطها بالـ database لاحقاً) -->
+    <div class="messages">
+        <p>لا توجد رسائل بعد</p>
+    </div>
+
+    <!-- إرسال رسالة -->
+    <form method="POST">
+        <textarea name="message" placeholder="اكتب رسالتك هنا"></textarea>
+        <button type="submit">إرسال</button>
+    </form>
+
+    {% if request.status == "مكتمل" %}
+        <p>تم تسليم التصميم النهائي ✅</p>
+        <form action="{{ url_for('client.receive_design', request_id=request.id) }}" method="POST">
+            <button type="submit">تأكيد الاستلام</button>
+        </form>
+    {% endif %}
+
+    <a href="{{ url_for('client.dashboard_client') }}">🏠 العودة للوحة التحكم</a>
+</div>
+{% endblock %}

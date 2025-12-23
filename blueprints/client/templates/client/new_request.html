@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}إرسال طلب تصميم{% endblock %}
+
+{% block content %}
+<div class="client-new-request">
+    <h2>إرسال طلب تصميم جديد</h2>
+    <form method="POST">
+        <label>وصف الطلب:</label>
+        <textarea name="description" placeholder="اكتب وصف التصميم المطلوب" required></textarea>
+
+        <!-- يمكن إضافة اختيار مصمم محدد لاحقاً -->
+        <!-- <label>اختيار مصمم:</label>
+        <select name="designer_id">
+            <option value="1">مصمم 1</option>
+        </select> -->
+
+        <button type="submit">إرسال الطلب</button>
+    </form>
+
+    <a href="{{ url_for('client.dashboard_client') }}">🏠 العودة للوحة التحكم</a>
+</div>
+{% endblock %}

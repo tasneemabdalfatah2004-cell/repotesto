@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}الطلبات{% endblock %}
+
+{% block content %}
+<aside class="sidebar">
+    <div class="logo">Designer Panel</div>
+    <ul>
+        <li><a href="{{ url_for('designer.dashboard_designer') }}">🏠 لوحة التحكم</a></li>
+        <li><a href="{{ url_for('designer.profile_designer') }}">👤 الملف الشخصي</a></li>
+        <li><a href="{{ url_for('designer.add_design') }}">➕ إضافة عمل جديد</a></li>
+        <li><a href="{{ url_for('designer.designer_requests') }}">📩 الطلبات</a></li>
+        <li><a href="{{ url_for('auth.logout') }}">🔓 تسجيل خروج</a></li>
+    </ul>
+</aside>
+
+<div class="requests-container">
+    <h2>قائمة الطلبات</h2>
+    {% for req in requests %}
+    <div class="request-card">
+        <p>{{ req['description'] }}</p>
+        <span>الحالة: {{ req['status'] }}</span>
+        <a href="{{ url_for('designer.open_chat', request_id=req['id']) }}">💬 دردشة</a>
+        {% if req['status'] != 'مكتمل' %}
+        <form action="{{ url_for('designer.submit_design', request_id=req['id']) }}" method="POST">
+            <button type="submit">تسليم التصميم</button>
+        </form>
+        {% endif %}
+    </div>
+    {% else %}
+        <p>لا توجد طلبات حالياً</p>
+    {% endfor %}
+</div>
+{% endblock %}

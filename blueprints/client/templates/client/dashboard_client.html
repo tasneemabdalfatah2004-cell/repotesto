@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}لوحة تحكم العميل{% endblock %}
+
+{% block content %}
+<div class="client-dashboard">
+    <h2>مرحباً {{ client_name }}</h2>
+
+    <a href="{{ url_for('client.new_request') }}" class="btn">➕ إرسال طلب جديد</a>
+
+    <h3>طلباتك الحالية</h3>
+    <ul>
+        {% for req in requests %}
+            <li>
+                {{ req.description }} - الحالة: {{ req.status }}
+                <a href="{{ url_for('client.open_chat', request_id=req.id) }}">💬 دردشة</a>
+            </li>
+        {% else %}
+            <li>لا توجد طلبات حالياً</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('auth.logout') }}">🔓 تسجيل خروج</a>
+</div>
+{% endblock %}

@@ -9,11 +9,11 @@
     <aside class="sidebar">
         <div class="logo">Designer Panel</div>
         <ul>
-            <li><a href="{{ url_for('dashboard_designer') }}">🏠 لوحة التحكم</a></li>
-            <li><a href="{{ url_for('profile_designer') }}">👤 الملف الشخصي</a></li>
-            <li><a href="{{ url_for('add_design') }}">➕ إضافة عمل جديد</a></li>
-            <li><a href="{{ url_for('designer_requests') }}">📩 الطلبات</a></li>
-            <li><a href="{{ url_for('logout') }}">🔓 تسجيل خروج</a></li>
+            <li><a href="{{ url_for('designer.dashboard_designer') }}">🏠 لوحة التحكم</a></li>
+            <li><a href="{{ url_for('designer.profile_designer') }}">👤 الملف الشخصي</a></li>
+            <li><a href="{{ url_for('designer.add_design') }}">➕ إضافة عمل جديد</a></li>
+            <li><a href="{{ url_for('designer.designer_requests') }}">📩 الطلبات</a></li>
+            <li><a href="{{ url_for('auth.logout') }}">🔓 تسجيل خروج</a></li>
         </ul>
     </aside>
 
@@ -62,9 +62,9 @@
                     <span>الحالة: {{ req['status'] }}</span>
                 </div>
                 <div class="request-actions">
-                    <a href="{{ url_for('open_chat', request_id=req['id']) }}"><button>فتح المحادثة</button></a>
+                    <a href="{{ url_for('designer.open_chat', request_id=req['id']) }}"><button>فتح المحادثة</button></a>
                     {% if req['status'] != 'مكتمل' %}
-                    <form action="{{ url_for('submit_design', request_id=req['id']) }}" method="POST">
+                    <form action="{{ url_for('designer.submit_design', request_id=req['id']) }}" method="POST">
                         <button type="submit">تسليم التصميم</button>
                     </form>
                     {% else %}

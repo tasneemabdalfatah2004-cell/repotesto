@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}الملف الشخصي{% endblock %}
+
+{% block content %}
+<aside class="sidebar">
+    <div class="logo">Designer Panel</div>
+    <ul>
+        <li><a href="{{ url_for('designer.dashboard_designer') }}">🏠 لوحة التحكم</a></li>
+        <li><a href="{{ url_for('designer.profile_designer') }}">👤 الملف الشخصي</a></li>
+        <li><a href="{{ url_for('designer.add_design') }}">➕ إضافة عمل جديد</a></li>
+        <li><a href="{{ url_for('designer.designer_requests') }}">📩 الطلبات</a></li>
+        <li><a href="{{ url_for('auth.logout') }}">🔓 تسجيل خروج</a></li>
+    </ul>
+</aside>
+
+<div class="profile-container">
+    <h2>ملفي الشخصي</h2>
+    <form method="POST">
+        <label>الاسم:</label>
+        <input type="text" name="username" value="{{ designer['username'] }}" required>
+
+        <label>السيرة الذاتية:</label>
+        <textarea name="bio">{{ designer['bio'] }}</textarea>
+
+        <label>روابط البورتفوليو:</label>
+        <textarea name="portfolio">{{ designer['portfolio'] }}</textarea>
+
+        <button type="submit">حفظ التغييرات</button>
+    </form>
+</div>
+{% endblock %}

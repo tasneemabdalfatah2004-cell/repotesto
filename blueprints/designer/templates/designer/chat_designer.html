@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}دردشة العميل{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+    <h2>دردشة الطلب: {{ request['description'] }}</h2>
+
+    <!-- هنا يمكن وضع رسائل المحادثة -->
+    <div class="messages">
+        <p>لا توجد رسائل بعد</p>
+    </div>
+
+    <!-- إرسال رسالة -->
+    <form method="POST">
+        <textarea name="message" placeholder="اكتب رسالتك هنا"></textarea>
+        <button type="submit">إرسال</button>
+    </form>
+
+    <a href="{{ url_for('designer.designer_requests') }}">🏠 العودة للطلبات</a>
+</div>
+{% endblock %}
