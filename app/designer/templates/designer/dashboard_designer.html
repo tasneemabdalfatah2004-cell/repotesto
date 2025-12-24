@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}الصفحة الرئيسية{% endblock %}
+
+{% block content %}
+
+
+<!-- ================= HERO SECTION ================= -->
+<section class="hero">
+    <div class="hero-overlay">
+        <h1>أفضل المصممين المحترفين في منصة واحدة</h1>
+        <p>اكتشف أعمال المصممين وبدأ تنفيذ أعمالك الآن</p>
+
+        <form class="search-box" method="GET">
+            <input type="text" name="q" placeholder="ابحث عن تصميم...">
+            <button type="submit">بحث</button>
+        </form>
+    </div>
+</section>
+
+<!-- ================= PORTFOLIO SECTION ================= -->
+<section class="portfolio-section">
+    <div class="section-header">
+        <h2>أعمال المصممين</h2>
+    </div>
+
+    <div class="portfolio-grid">
+        {% for work in portfolio %}
+        <div class="portfolio-card">
+
+            <div class="card-image">
+                <a href="{{ url_for('static', filename=work['image_path'].split('static/')[-1]) }}" target="_blank">
+                    <img src="{{ url_for('static', filename=work['image_path'].split('static/')[-1]) }}"
+                         alt="{{ work['title'] }}">
+                </a>
+            </div>
+
+            <div class="card-body">
+                <h3>{{ work['title'] }}</h3>
+                <p>{{ work['description'] }}</p>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}

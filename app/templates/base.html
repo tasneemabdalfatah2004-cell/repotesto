@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}مشروعي{% endblock %}</title>
+    <!-- ربط CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="nav-left">
+                <a href="/" class="logo">منصتي</a>
+            </div>
+
+            <div class="nav-center">
+                <a href="{{ url_for('designer.dashboard_designer') }}">لوحة التحكم</a>
+                <a href="{{ url_for('designer.profile_designer') }}">الملف الشخصي</a>
+                <a href="{{ url_for('designer.add_design') }}">إضافة عمل</a>
+                <a href="{{ url_for('designer.designer_requests') }}">الطلبات</a>
+            </div>
+
+            <div class="nav-right">
+                <a href="{{ url_for('auth.logout') }}" class="btn-logout">تسجيل خروج</a>
+            </div>
+        </div>
+    </nav>
+    <!-- رسائل الفلاش -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                <ul>
+                {% for msg in messages %}
+                    <li>{{ msg }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- المحتوى الرئيسي -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer بسيط -->
+    <footer>
+        <p style="text-align: center;">&copy; 2025 مشروعي</p>
+    </footer>
+
+</body>
+</html>

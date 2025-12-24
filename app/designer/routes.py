@@ -161,5 +161,6 @@ def profile_designer():
         return redirect(url_for('designer.profile_designer'))
 
     designer = conn.execute('SELECT * FROM users WHERE id=?', (session['user_id'],)).fetchone()
+    portfolio = conn.execute('SELECT * FROM designs WHERE designer_id=? ORDER BY id DESC;', (session['user_id'],)).fetchall()
     conn.close()
-    return render_template('designer/profile_designer.html', designer=designer)    
+    return render_template('designer/profile_designer.html', designer=designer, portfolio=portfolio)    

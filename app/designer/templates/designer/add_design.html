@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}إضافة عمل جديد{% endblock %}
+
+{% block content %}
+
+<section class="add-design-page">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h2>إضافة عمل جديد</h2>
+        <p>أضف تصميمك ليظهر في ملفك الشخصي</p>
+    </div>
+
+    <!-- Form Card -->
+    <div class="form-card">
+        <form method="POST" enctype="multipart/form-data">
+
+            <div class="form-group">
+                <label>عنوان العمل</label>
+                <input
+                    type="text"
+                    name="title"
+                    placeholder="ادخل عنوان التصميم"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label>وصف العمل</label>
+                <textarea
+                    name="description"
+                    placeholder="اكتب وصفًا مختصرًا للعمل"
+                    required
+                ></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>صورة العمل</label>
+                <input
+                    type="file"
+                    name="image"
+                    accept="image/*"
+                    required
+                >
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">
+                    حفظ العمل
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+</section>
+
+{% endblock %}

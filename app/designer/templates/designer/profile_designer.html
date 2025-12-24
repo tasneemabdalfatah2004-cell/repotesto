@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}الملف الشخصي{% endblock %}
+
+{% block content %}
+
+<!-- ================= PROFILE HEADER ================= -->
+<section class="profile-header">
+    <div class="profile-avatar">
+        <img src="{{ url_for('static', filename=designer['avatar'] if designer['avatar'] else 'img/profile.webp') }}"
+             alt="{{ designer['username'] }}">
+    </div>
+
+    <h2 class="profile-name">{{ designer['username'] }}</h2>
+
+    {% if designer['location'] %}
+        <p class="profile-location">📍 {{ designer['location'] }}</p>
+    {% endif %}
+</section>
+
+<!-- ================= PROFILE CONTENT ================= -->
+<section class="profile-content">
+
+    <!-- ===== ABOUT ===== -->
+    <div class="profile-box">
+        <h3>نبذة عني</h3>
+        <p>
+            {{ designer['bio'] if designer['bio'] else 'لم يتم إضافة نبذة بعد.' }}
+        </p>
+    </div>
+
+    <!-- ===== PORTFOLIO ===== -->
+    <div class="profile-box">
+        <h3>أعمالي</h3>
+
+        <div class="portfolio-grid">
+            {% for work in portfolio %}
+            <div class="portfolio-card">
+
+                <div class="card-image">
+                    <a href="{{ url_for('static', filename=work['image_path'].split('static/')[-1]) }}" target="_blank">
+                        <img src="{{ url_for('static', filename=work['image_path'].split('static/')[-1]) }}"
+                             alt="{{ work['title'] }}">
+                    </a>
+                </div>
+
+
+                <div class="card-body">
+                    <h4>{{ work['title'] }}</h4>
+                    <p>{{ work['description'] }}</p>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</section>
+
+{% endblock %}
