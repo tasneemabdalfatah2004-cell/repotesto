@@ -29,7 +29,7 @@
         <div class="portfolio-card">
 
             <div class="card-image">
-                <a href="{{ url_for('static', filename=work['image_path'].split('static/')[-1]) }}" target="_blank">
+                <a href="{{ url_for('designer.design_details', design_id=work['id']) }}">
                     <img src="{{ url_for('static', filename=work['image_path'].split('static/')[-1]) }}"
                          alt="{{ work['title'] }}">
                 </a>

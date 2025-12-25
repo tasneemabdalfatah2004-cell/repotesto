@@ -48,10 +48,10 @@ def init_db(app):
     c.execute('''
     CREATE TABLE IF NOT EXISTS designs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        designer_id INTEGER,
-        title TEXT,
-        description TEXT,
-        image_path TEXT
+        designer_id INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        description TEXT NOT NULL,
+        image_path TEXT NOT NULL
     )
     ''')
     c.execute('''
