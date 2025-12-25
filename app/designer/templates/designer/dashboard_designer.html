@@ -26,21 +26,21 @@
 
     <div class="portfolio-grid">
         {% for work in portfolio %}
-        <div class="portfolio-card">
+        <a href="{{ url_for('designer.design_details', design_id=work['id']) }}">
+            <div class="portfolio-card">
 
-            <div class="card-image">
-                <a href="{{ url_for('designer.design_details', design_id=work['id']) }}">
-                    <img src="{{ url_for('static', filename=work['image_path'].split('static/')[-1]) }}"
-                         alt="{{ work['title'] }}">
-                </a>
+                <div class="card-image">
+                        <img src="{{ url_for('static', filename=work['image_path'].split('static/')[-1]) }}"
+                            alt="{{ work['title'] }}">
+                </div>
+
+                <div class="card-body">
+                    <h3>{{ work['title'] }}</h3>
+                    <p>{{ work['description'] }}</p>
+                </div>
+
             </div>
-
-            <div class="card-body">
-                <h3>{{ work['title'] }}</h3>
-                <p>{{ work['description'] }}</p>
-            </div>
-
-        </div>
+        </a>
         {% endfor %}
     </div>
 </section>
