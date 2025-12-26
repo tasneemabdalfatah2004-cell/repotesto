@@ -63,5 +63,16 @@ def init_db(app):
         status TEXT DEFAULT 'مفتوح'
     )
     ''')
+    c.execute('''
+    CREATE TABLE IF NOT EXISTS requests (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    client_id INTEGER NOT NULL,
+    designer_id INTEGER,
+    design_id INTEGER,
+    description TEXT NOT NULL,
+    status TEXT DEFAULT 'مفتوح',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    ''')
     conn.commit()
     conn.close()

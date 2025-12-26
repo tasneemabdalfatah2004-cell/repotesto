@@ -80,3 +80,4 @@ def logout():
     session.clear()
     flash('تم تسجيل الخروج!')
     return redirect(url_for('auth.login'))
+    

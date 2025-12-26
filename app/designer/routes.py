@@ -191,7 +191,9 @@ def design_details(design_id):
 
     # جلب بيانات المشروع
     design = conn.execute(
-        'SELECT * FROM designs WHERE id = ?',
+        'SELECT d.*, u.username as designer_name FROM designs d '
+        'JOIN users u ON d.designer_id = u.id '
+        'WHERE d.id = ?',
         (design_id,)
     ).fetchone()
 
@@ -207,4 +209,4 @@ def design_details(design_id):
         'designer/design_details.html',
         design=design,
         images=images
-    )    
+    )

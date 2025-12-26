@@ -5,9 +5,8 @@ from config import Config
 client_bp = Blueprint('client', __name__, template_folder='templates')
 
 # التحقق من صلاحية العميل
-def client_required():
-    return 'role' in session and session['role'] == 'client'
-
+def logint_required():
+    return 'used id'in session
 
 # ----------------------------
 # لوحة التحكم للعميل
@@ -33,45 +32,30 @@ def dashboard_client():
 # ----------------------------
 @client_bp.route('/new_request', methods=['GET', 'POST'])
 def new_request():
-    if not client_required():
-        flash('غير مسموح بالدخول!')
+    if 'user_id' not in session:
+        flash('يرجى تسجيل الدخول لإرسال طلب')
         return redirect(url_for('auth.login'))
 
     if request.method == 'POST':
         description = request.form['description']
-        designer_id = request.form.get('designer_id')  # يمكن اختيار مصمم محدد لاحقًا
+        designer_id = request.form.get('designer_id')
+        design_id = request.form.get('design_id')
 
         conn = sqlite3.connect(Config.DATABASE)
-        conn.execute('INSERT INTO requests (client_id, designer_id, description) VALUES (?,?,?)',
-                     (session['user_id'], designer_id, description))
+        conn.execute(
+            '''
+            INSERT INTO requests (client_id, designer_id, design_id, description)
+            VALUES (?,?,?,?)
+            ''',
+            (session['user_id'], designer_id, design_id, description)
+        )
         conn.commit()
         conn.close()
 
-        flash('تم إرسال الطلب بنجاح!')
+        flash('تم إرسال الطلب بنجاح')
         return redirect(url_for('client.dashboard_client'))
 
     return render_template('client/new_request.html')
-
-
-# ----------------------------
-# فتح دردشة مع المصمم
-# ----------------------------
-@client_bp.route('/chat/<int:request_id>')
-def open_chat(request_id):
-    if not client_required():
-        flash('غير مسموح بالدخول!')
-        return redirect(url_for('auth.login'))
-
-    conn = sqlite3.connect(Config.DATABASE)
-    conn.row_factory = sqlite3.Row
-    req = conn.execute('SELECT * FROM requests WHERE id=? AND client_id=?',
-                       (request_id, session['user_id'])).fetchone()
-    conn.close()
-
-    if req:
-        return render_template('client/chat_client.html', request=req)
-    flash('الطلب غير موجود!')
-    return redirect(url_for('client.dashboard_client'))
 
 
 # ----------------------------

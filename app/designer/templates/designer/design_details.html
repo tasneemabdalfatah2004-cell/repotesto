@@ -1,25 +1,86 @@
 {% extends 'base.html' %}
 
-{% block title %}تفاصيل المشروع{% endblock %}
+{% block title %}تفاصيل المشروع - {{ design['title'] }}{% endblock %}
 
 {% block content %}
 
-<section class="design-details-page">
 
-    <!-- Header المشروع -->
-    <div class="page-header">
-        <h2>{{ design['title'] }}</h2>
-        <p>{{ design['description'] }}</p>
-    </div>
+<div class="design-details-container">
 
-    <!-- صور المشروع -->
-    <div class="project-images">
-        {% for img in images %}
-            <img src="{{ url_for('static', filename=img['image_path']) }}" 
-                 alt="{{ design['title'] }}" width="250" style="margin:5px; border:1px solid #ccc;">
-        {% endfor %}
-    </div>
+    <!-- العمود الرئيسي -->
+    <main class="main-content">
 
-</section>
+        <!-- الصورة الرئيسية -->
+        <div class="main-image">
+            <img src="{{ url_for('static', filename=design['image_path']) }}" alt="{{ design['title'] }}">
+        </div>
+
+        <!-- وصف المشروع -->
+        <div class="project-description">
+            <h2>{{ design['title'] }}</h2>
+            <p>{{ design['description'] }}</p>
+        </div>
+
+        <!-- الصور المرفقة -->
+        <div class="attached-images">
+            {% for img in images %}
+                <img src="{{ url_for('static', filename=img['image_path']) }}" 
+                     alt="{{ design['title'] }}" class="thumbnail">
+            {% endfor %}
+        </div>
+
+    </main>
+
+    <!-- العمود الجانبي -->
+    <aside class="sidebar">
+
+        <!-- معلومات المصمم -->
+        <div class="info-box">
+            <h4>المصمم</h4>
+            <span class="designer-name">{{ design['designer_name'] }}</span>
+
+            <h4>معلومات المشروع</h4>
+            <div class="design-info">
+                <p>التقييم: 
+                    <span class="star-rating">★★★★☆</span>
+                </p>
+            </div>
+
+            <a href="{{ url_for('client.new_request') }}?design_id={{ design['id'] }}&designer_id={{ design['designer_id'] }}"
+               class="btn btn-primary">
+                طلب تصميم مشابه
+            </a>
+        </div>
+
+    </aside>
+
+</div>
+
+<!-- Lightbox Overlay -->
+<div id="lightbox-overlay">
+    <span class="close-lightbox">&times;</span>
+    <img src="" alt="Project Image">
+</div>
+<script>
+// ====== Lightbox Functionality ======
+const overlay = document.getElementById('lightbox-overlay');
+const overlayImg = overlay.querySelector('img');
+const closeBtn = overlay.querySelector('.close-lightbox');
+
+document.querySelectorAll('.attached-images .thumbnail').forEach(img => {
+    img.addEventListener('click', () => {
+        overlay.style.display = 'flex';
+        overlayImg.src = img.src;
+    });
+});
+
+closeBtn.addEventListener('click', () => {
+    overlay.style.display = 'none';
+});
+
+overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.style.display = 'none';
+});
+</script>
 
 {% endblock %}

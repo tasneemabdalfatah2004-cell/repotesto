@@ -1,34 +1,95 @@
 {% extends 'base.html' %}
 
-{% block title %}الطلبات{% endblock %}
+{% block title %}طلب تصميم مشابه{% endblock %}
 
 {% block content %}
-<aside class="sidebar">
-    <div class="logo">Designer Panel</div>
-    <ul>
-        <li><a href="{{ url_for('designer.dashboard_designer') }}">🏠 لوحة التحكم</a></li>
-        <li><a href="{{ url_for('designer.profile_designer') }}">👤 الملف الشخصي</a></li>
-        <li><a href="{{ url_for('designer.add_design') }}">➕ إضافة عمل جديد</a></li>
-        <li><a href="{{ url_for('designer.designer_requests') }}">📩 الطلبات</a></li>
-        <li><a href="{{ url_for('auth.logout') }}">🔓 تسجيل خروج</a></li>
-    </ul>
-</aside>
-
-<div class="requests-container">
-    <h2>قائمة الطلبات</h2>
-    {% for req in requests %}
-    <div class="request-card">
-        <p>{{ req['description'] }}</p>
-        <span>الحالة: {{ req['status'] }}</span>
-        <a href="{{ url_for('designer.open_chat', request_id=req['id']) }}">💬 دردشة</a>
-        {% if req['status'] != 'مكتمل' %}
-        <form action="{{ url_for('designer.submit_design', request_id=req['id']) }}" method="POST">
-            <button type="submit">تسليم التصميم</button>
-        </form>
-        {% endif %}
+<section class="new-request-page">
+    <div class="page-header">
+        <h2>طلب تصميم مشابه</h2>
+        <p>املأ البيانات أدناه لتقديم طلب تصميم مشابه لهذا المشروع</p>
     </div>
-    {% else %}
-        <p>لا توجد طلبات حالياً</p>
-    {% endfor %}
-</div>
+
+    <div class="form-card">
+        <form method="POST">
+            <div class="form-group">
+                <label for="description">وصف الطلب</label>
+                <textarea id="description" name="description" placeholder="اكتب وصفًا تفصيليًا للطلب" required></textarea>
+            </div>
+
+            <!-- نخزن ID التصميم لإرساله مع الطلب -->
+            <input type="hidden" name="design_id" value="{{ design_id }}">
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">إرسال الطلب</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<style>
+.new-request-page {
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.page-header h2 {
+    margin-bottom: 5px;
+    color: #2c3e50;
+}
+
+.page-header p {
+    margin-bottom: 20px;
+    color: #555;
+}
+
+.form-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.form-group textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: vertical;
+    min-height: 120px;
+    font-size: 15px;
+}
+
+.form-actions {
+    text-align: right;
+}
+
+.btn-primary {
+    background-color: #27ae60;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #219150;
+}
+</style>
 {% endblock %}

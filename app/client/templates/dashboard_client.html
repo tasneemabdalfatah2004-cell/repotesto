@@ -1,0 +1,83 @@
+<section class="client-requests">
+    <h2>طلباتك السابقة</h2>
+
+    {% if requests %}
+        <div class="requests-grid">
+            {% for req in requests %}
+            <div class="request-card">
+                <div class="request-header">
+                    <span>الطلب:</span>
+                    <p>{{ req['description'] }}</p>
+                </div>
+                <div class="request-status">
+                    <span>الحالة:</span>
+                    <p class="status {{ req['status'] | lower }}">{{ req['status'] }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>لم تقم بإرسال أي طلب بعد.</p>
+    {% endif %}
+</section>
+
+<style>
+.client-requests {
+    max-width: 900px;
+    margin: 30px auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.client-requests h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.requests-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.request-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.request-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.request-header span,
+.request-status span {
+    font-weight: bold;
+    color: #555;
+}
+
+.request-header p,
+.request-status p {
+    margin: 5px 0 0 0;
+}
+
+.status {
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.status.مفتوح {
+    background-color: #f0f9ff;
+    color: #007bff;
+}
+
+.status.مغلوق {
+    background-color: #fef3f3;
+    color: #e74c3c;
+}
+</style>

@@ -39,7 +39,7 @@ body {
 .login-container button {
     width: 100%;
     padding: 10px;
-    background-color: #273c75;
+    background-color: #6b5ba6;
     color: white;
     border: none;
     border-radius: 5px;
@@ -47,7 +47,7 @@ body {
 }
 
 .login-container button:hover {
-    background-color: #40739e;
+    background-color: #6b5ba6;
 }
 
 .login-container a {
@@ -705,4 +705,144 @@ th {
 .btn-primary:hover {
     background: #5a4c93;
     transform: translateY(-2px);
+}
+/* ====== تنسيق الصفحة ====== */
+.design-details-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    padding: 30px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    direction: rtl;
+}
+
+/* العمود الرئيسي */
+.main-content {
+    flex: 3;
+    min-width: 300px;
+}
+
+.main-image img {
+    width:85%;
+    height: 350px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+.main-image img:hover {
+    transform: scale(1.02);
+}
+
+.project-description {
+    margin-bottom: 20px;
+}
+
+.attached-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.attached-images .thumbnail {
+    width: 120px;
+    height: auto;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid #ddd;
+}
+
+.attached-images .thumbnail:hover {
+    transform: scale(1.2);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    border-color: #aaa;
+}
+
+/* العمود الجانبي */
+.sidebar {
+    flex: 1;
+    min-width: 250px;
+}
+
+.info-box {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.info-box h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.designer-name {
+    font-weight: bold;
+    color: #2c3e50;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    text-align: center;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-order {
+    background-color: #27ae60;
+    color: white;
+}
+
+.btn-order:hover { background-color: #219150; }
+
+.star-rating {
+    color: #f1c40f;
+}
+
+.design-info p {
+    margin: 5px 0;
+    color: #555;
+}
+
+/* ===== Lightbox Overlay ===== */
+#lightbox-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+#lightbox-overlay img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+}
+
+#lightbox-overlay .close-lightbox {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
 }
