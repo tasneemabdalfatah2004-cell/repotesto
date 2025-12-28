@@ -56,15 +56,6 @@ def init_db(app):
     ''')
     c.execute('''
     CREATE TABLE IF NOT EXISTS requests (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        client_id INTEGER,
-        designer_id INTEGER,
-        description TEXT,
-        status TEXT DEFAULT 'مفتوح'
-    )
-    ''')
-    c.execute('''
-    CREATE TABLE IF NOT EXISTS requests (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     client_id INTEGER NOT NULL,
     designer_id INTEGER,

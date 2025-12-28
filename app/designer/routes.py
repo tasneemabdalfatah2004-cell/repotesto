@@ -93,62 +93,6 @@ def add_design():
     return render_template('designer/add_design.html')
 
 # ----------------------------
-# متابعة الطلبات الخاصة بالمصمم
-# ----------------------------
-@designer_bp.route('/requests')
-def designer_requests():
-    if not designer_required():
-        flash('غير مسموح بالدخول!')
-        return redirect(url_for('auth.login'))
-
-    conn = sqlite3.connect(Config.DATABASE)
-    conn.row_factory = sqlite3.Row
-    requests_list = conn.execute('SELECT * FROM requests WHERE designer_id=?', (session['user_id'],)).fetchall()
-    conn.close()
-
-    return render_template('designer/requests_designer.html', requests=requests_list)
-
-
-# ----------------------------
-# فتح المحادثة مع العميل
-# ----------------------------
-@designer_bp.route('/chat/<int:request_id>')
-def open_chat(request_id):
-    if not designer_required():
-        flash('غير مسموح بالدخول!')
-        return redirect(url_for('auth.login'))
-
-    conn = sqlite3.connect(Config.DATABASE)
-    conn.row_factory = sqlite3.Row
-    req = conn.execute('SELECT * FROM requests WHERE id=? AND designer_id=?',
-                       (request_id, session['user_id'])).fetchone()
-    conn.close()
-
-    if req:
-        return render_template('designer/chat_designer.html', request=req)
-    flash('الطلب غير موجود!')
-    return redirect(url_for('designer.designer_requests'))
-
-
-# ----------------------------
-# تسليم التصميم النهائي
-# ----------------------------
-@designer_bp.route('/submit/<int:request_id>', methods=['POST'])
-def submit_design(request_id):
-    if not designer_required():
-        flash('غير مسموح بالدخول!')
-        return redirect(url_for('auth.login'))
-
-    conn = sqlite3.connect(Config.DATABASE)
-    conn.execute('UPDATE requests SET status="مكتمل" WHERE id=? AND designer_id=?',
-                 (request_id, session['user_id']))
-    conn.commit()
-    conn.close()
-    flash('تم تسليم التصميم بنجاح!')
-    return redirect(url_for('designer.designer_requests'))
-
-
-# ----------------------------
 # تعديل الملف الشخصي للمصمم
 # ----------------------------
 @designer_bp.route('/profile', methods=['GET', 'POST'])
@@ -165,18 +109,29 @@ def profile_designer():
         bio = request.form['bio']
         portfolio = request.form['portfolio']
 
-        conn.execute('UPDATE users SET username=?, bio=?, portfolio=? WHERE id=?',
-                     (username, bio, portfolio, session['user_id']))
+        conn.execute(
+            'UPDATE users SET username=?, bio=?, portfolio=? WHERE id=?',
+            (username, bio, portfolio, session['user_id'])
+        )
         conn.commit()
-        conn.close()
-
         flash('تم حفظ التغييرات بنجاح!')
-        return redirect(url_for('designer.profile_designer'))
 
-    designer = conn.execute('SELECT * FROM users WHERE id=?', (session['user_id'],)).fetchone()
-    portfolio = conn.execute('SELECT * FROM designs WHERE designer_id=? ORDER BY id DESC;', (session['user_id'],)).fetchall()
+    designer = conn.execute(
+        'SELECT * FROM users WHERE id=?',
+        (session['user_id'],)
+    ).fetchone()
+
+    portfolio = conn.execute(
+        'SELECT * FROM designs WHERE designer_id=? ORDER BY id DESC',
+        (session['user_id'],)
+    ).fetchall()
+
     conn.close()
-    return render_template('designer/profile_designer.html', designer=designer, portfolio=portfolio)    
+    return render_template(
+        'designer/profile_designer.html',
+        designer=designer,
+        portfolio=portfolio
+    )
 #---------------------------------
 #تفاصيل المشروع
 #-------------------------------------
@@ -209,4 +164,36 @@ def design_details(design_id):
         'designer/design_details.html',
         design=design,
         images=images
+    )
+#-----------------------------
+#عرض الطلبات
+#-------------------------------
+@designer_bp.route('/requests')
+def designer_requests():
+    if not designer_required():
+        flash('غير مسموح بالدخول')
+        return redirect(url_for('auth.login'))
+
+    conn = sqlite3.connect(Config.DATABASE)
+    conn.row_factory = sqlite3.Row
+
+    requests = conn.execute("""
+        SELECT 
+            r.id,
+            r.description,
+            r.status,
+            u.username AS client_name,
+            d.title AS design_title
+        FROM requests r
+        JOIN users u ON r.client_id = u.id
+        LEFT JOIN designs d ON r.design_id = d.id
+        WHERE r.designer_id = ?
+        ORDER BY r.created_at DESC
+    """, (session['user_id'],)).fetchall()
+
+    conn.close()
+
+    return render_template(
+        'designer/requests.html',
+        requests=requests
     )

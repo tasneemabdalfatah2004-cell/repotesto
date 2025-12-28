@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% block title %}طلبات التصميم{% endblock %}
+
+{% block content %}
+<div class="designer-requests-page">
+
+    <div class="page-header">
+        <h2>📨 طلبات التصميم</h2>
+        <p>إدارة الطلبات الواردة من العملاء</p>
+    </div>
+
+    {% if requests %}
+        <div class="requests-list">
+            {% for req in requests %}
+            <div class="request-card">
+
+                <div class="request-top">
+                    <span class="client-name">
+                        👤 {{ req['client_name'] }}
+                    </span>
+                    <span class="status status-{{ req['status'] }}">
+                        {{ req['status'] }}
+                    </span>
+                </div>
+
+                <p class="request-desc">
+                    {{ req['description'] }}
+                </p>
+
+                {% if req['design_title'] %}
+                <p class="design-ref">
+                    🎨 تصميم مشابه: <strong>{{ req['design_title'] }}</strong>
+                </p>
+                {% endif %}
+
+                <div class="request-actions">
+                    {% if req['status'] == 'مفتوح' %}
+                        <a href="{{ url_for('designer.accept_request', request_id=req['id']) }}" class="btn accept">قبول</a>
+                        <a href="{{ url_for('designer.reject_request', request_id=req['id']) }}" class="btn reject">رفض</a>
+                    {% elif req['status'] == 'مقبول' %}
+                        <a href="{{ url_for('designer.chat', request_id=req['id']) }}" class="btn chat">💬 محادثة</a>
+                    {% endif %}
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-box">
+            لا يوجد طلبات حاليًا
+        </div>
+    {% endif %}
+
+</div>
+
+<style>
+.designer-requests-page {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 10px;
+}
+
+.page-header {
+    margin-bottom: 25px;
+}
+
+.page-header h2 {
+    margin-bottom: 5px;
+}
+
+.page-header p {
+    color: #666;
+}
+
+.requests-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.request-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+}
+
+.request-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.client-name {
+    font-weight: bold;
+}
+
+.status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    color: #fff;
+}
+
+.status-مفتوح { background: #3498db; }
+.status-مقبول { background: #2ecc71; }
+.status-مرفوض { background: #e74c3c; }
+
+.request-desc {
+    margin: 10px 0;
+    color: #444;
+}
+
+.design-ref {
+    font-size: 14px;
+    color: #555;
+}
+
+.request-actions {
+    margin-top: 15px;
+}
+
+.btn {
+    padding: 8px 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+.accept { background: #2ecc71; }
+.reject { background: #e74c3c; }
+.chat { background: #9b59b6; }
+
+.empty-box {
+    background: #f8f9fa;
+    padding: 30px;
+    text-align: center;
+    border-radius: 10px;
+    color: #777;
+}
+</style>
+{% endblock %}

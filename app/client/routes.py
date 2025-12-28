@@ -58,15 +58,3 @@ def new_request():
     return render_template('client/new_request.html')
 
 
-# ----------------------------
-# استلام التصميم النهائي
-# ----------------------------
-@client_bp.route('/receive/<int:request_id>', methods=['POST'])
-def receive_design(request_id):
-    if not client_required():
-        flash('غير مسموح بالدخول!')
-        return redirect(url_for('auth.login'))
-
-    # في هذه المرحلة مجرد تأكيد الاستلام
-    flash('تم استلام التصميم النهائي!')
-    return redirect(url_for('client.dashboard_client'))
