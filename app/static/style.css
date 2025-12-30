@@ -11,6 +11,10 @@ body {
     background-color: #f5f6fa;
 }
 
+img {
+    object-fit: cover !important;
+}
+
 /* login / register */
 .login-container {
     width: 350px;
@@ -198,31 +202,144 @@ body {
     background-color: #40739e;
 }
 
+.portfolio-section {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.section-header h2 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+}
+
+.section-header h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(to right, #4CAF50, #2196F3);
+}
+
 .portfolio-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    padding: 1rem;
+}
+
+@media (min-width: 1024px) {
+    .portfolio-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+    }
 }
 
 .portfolio-card {
+    background: white;
+    border-radius: 12px;
     overflow: hidden;
-    transition: transform 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .portfolio-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.card-image {
+    height: 180px;
+    overflow: hidden;
 }
 
 .portfolio-card img {
     width: 100%;
-    height: 150px;
+    height: 100%;
     object-fit: cover;
+    transition: transform 0.5s ease;
 }
 
-.portfolio-card h3,
-.portfolio-card p {
-    text-align: center;
+.portfolio-card:hover img {
+    transform: scale(1.05);
 }
+
+.card-body {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.portfolio-card h3 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 0.8rem;
+    text-align: center;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.portfolio-card p {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    text-align: center;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Remove default link styles */
+.portfolio-grid a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .portfolio-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+    
+    .card-image {
+        height: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .portfolio-section {
+        padding: 1rem;
+    }
+    
+    .portfolio-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .section-header h2 {
+        font-size: 2rem;
+    }
+}الصفحة الرئيسية
 
 .add-design-container input,
 .add-design-container textarea {

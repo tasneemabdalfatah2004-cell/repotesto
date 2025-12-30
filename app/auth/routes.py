@@ -9,7 +9,6 @@ auth_bp = Blueprint('auth', __name__, template_folder='templates')
 # ----------------------------
 # تسجيل الدخول
 # ----------------------------
-@auth_bp.route('/', methods=['GET','POST'])
 @auth_bp.route('/login', methods=['GET','POST'])
 def login():
     if request.method == 'POST':
@@ -33,10 +32,8 @@ def login():
             # إعادة التوجيه حسب الدور
             if user['role'] == 'admin':
                 return redirect(url_for('admin.dashboard_admin'))
-            elif user['role'] == 'designer':
-                return redirect(url_for('designer.dashboard_designer'))
             else:
-                return redirect(url_for('client.dashboard_client'))
+                return redirect(url_for('home.home'))
         else:
             flash('البريد الإلكتروني أو كلمة المرور غير صحيحة!')
 

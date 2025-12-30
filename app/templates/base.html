@@ -17,10 +17,12 @@
             </div>
 
             <div class="nav-center">
-                <a href="{{ url_for('designer.dashboard_designer') }}">الصفحة الرئيسية</a>
-                <a href="{{ url_for('designer.profile_designer') }}">الملف الشخصي</a>
-                <a href="{{ url_for('designer.add_design') }}">إضافة عمل</a>
-                <a href="{{ url_for('designer.designer_requests') }}">الطلبات</a>
+                <a href="{{ url_for('home.home') }}">الصفحة الرئيسية</a>
+                <a href="{{ url_for('client.profile') if session['role'] == 'client' else url_for('designer.profile') }}">الملف الشخصي</a>
+                {% if session['role'] == 'designer' %}
+                    <a href="{{ url_for('designer.add_design') }}">إضافة عمل</a>
+                    <a href="{{ url_for('designer.designer_requests') }}">الطلبات</a>
+                {% endif %}
             </div>
 
             <div class="nav-right">

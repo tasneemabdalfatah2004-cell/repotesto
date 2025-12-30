@@ -5,8 +5,8 @@ from config import Config
 client_bp = Blueprint('client', __name__, template_folder='templates')
 
 # التحقق من صلاحية العميل
-def logint_required():
-    return 'used id'in session
+def client_required():
+    return 'role' in session and session['role'] == 'client'
 
 # ----------------------------
 # لوحة التحكم للعميل
@@ -53,8 +53,30 @@ def new_request():
         conn.close()
 
         flash('تم إرسال الطلب بنجاح')
-        return redirect(url_for('client.dashboard_client'))
+        return redirect(url_for('home.home'))
+    
+    designer_id = request.args.get('designer_id')
+    design_id = request.args.get('design_id')
 
-    return render_template('client/new_request.html')
+    return render_template('client/new_request.html', designer_id=designer_id, design_id=design_id)
 
 
+@client_bp.route('/profile', methods=['GET'])
+def profile():
+    if not client_required():
+        flash('غير مسموح بالدخول!')
+        return redirect(url_for('auth.login'))
+
+    conn = sqlite3.connect(Config.DATABASE)
+    conn.row_factory = sqlite3.Row
+
+    client = conn.execute(
+        'SELECT * FROM users WHERE id=?',
+        (session['user_id'],)
+    ).fetchone()
+
+    conn.close()
+    return render_template(
+        'profile.html',
+        client=client
+    )

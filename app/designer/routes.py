@@ -12,27 +12,6 @@ def designer_required():
     return 'role' in session and session['role'] == 'designer'
 
 
-# ----------------------------
-# لوحة التحكم للمصمم
-# ----------------------------
-@designer_bp.route('/')
-def dashboard_designer():
-    if not designer_required():
-        flash('غير مسموح بالدخول!')
-        return redirect(url_for('auth.login'))
-
-    conn = sqlite3.connect(Config.DATABASE)
-    conn.row_factory = sqlite3.Row
-    designer = conn.execute('SELECT * FROM users WHERE id=?', (session['user_id'],)).fetchone()
-    portfolio = conn.execute('SELECT * FROM designs WHERE designer_id=?', (session['user_id'],)).fetchall()
-    requests_list = conn.execute('SELECT * FROM requests WHERE designer_id=?', (session['user_id'],)).fetchall()
-    conn.close()
-
-    return render_template('designer/dashboard_designer.html',
-                           designer=designer,
-                           portfolio=portfolio,
-                           requests=requests_list)
-
 
 # ----------------------------
 # إضافة عمل جديد (متوافق مع عدة صور)
@@ -88,7 +67,7 @@ def add_design():
         conn.commit()
         conn.close()
         flash('تم إضافة العمل بنجاح!')
-        return redirect(url_for('designer.dashboard_designer'))
+        return redirect(url_for('home.home'))
 
     return render_template('designer/add_design.html')
 
@@ -96,7 +75,7 @@ def add_design():
 # تعديل الملف الشخصي للمصمم
 # ----------------------------
 @designer_bp.route('/profile', methods=['GET', 'POST'])
-def profile_designer():
+def profile():
     if not designer_required():
         flash('غير مسموح بالدخول!')
         return redirect(url_for('auth.login'))
@@ -128,7 +107,7 @@ def profile_designer():
 
     conn.close()
     return render_template(
-        'designer/profile_designer.html',
+        'designer/profile.html',
         designer=designer,
         portfolio=portfolio
     )
@@ -137,10 +116,6 @@ def profile_designer():
 #-------------------------------------
 @designer_bp.route('/design/<int:design_id>')
 def design_details(design_id):
-    if not designer_required():
-        flash('غير مسموح بالدخول!')
-        return redirect(url_for('auth.login'))
-
     conn = sqlite3.connect(Config.DATABASE)
     conn.row_factory = sqlite3.Row
 
@@ -197,3 +172,10 @@ def designer_requests():
         'designer/requests.html',
         requests=requests
     )
+
+@designer_bp.route('/accept_request')
+def accept_request():
+    return redirect(url_for('home.home'))
+@designer_bp.route('/reject_request')
+def reject_request():
+    return redirect(url_for('home.home'))

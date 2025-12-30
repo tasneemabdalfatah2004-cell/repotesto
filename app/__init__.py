@@ -18,11 +18,13 @@ def create_app():
 
     # تسجيل Blueprints
     from .auth.routes import auth_bp
+    from .home.routes import home_bp
     from .admin.routes import admin_bp
     from .designer.routes import designer_bp
     from .client.routes import client_bp
 
     app.register_blueprint(auth_bp)
+    app.register_blueprint(home_bp)
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(designer_bp, url_prefix='/designer')
     app.register_blueprint(client_bp, url_prefix='/client')
