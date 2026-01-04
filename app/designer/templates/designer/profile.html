@@ -24,9 +24,17 @@
     <!-- ===== ABOUT ===== -->
     <div class="profile-box">
         <h3>نبذة عني</h3>
-        <p>
-            {{ designer['bio'] if designer['bio'] else 'لم يتم إضافة نبذة بعد.' }}
-        </p>
+        <form method="POST">
+            <textarea name="bio" rows="5" class="bio-textarea" placeholder="اكتب نبذة عنك هنا...">{{ designer['bio'] }}</textarea>
+
+            <label>تخصصي:</label>
+            <input type="text" name="specialty" class="input-field" placeholder="مثال: تصميم شعارات وهويات بصرية" value="{{ designer['specialty'] }}">
+
+              <h3>طابع أعمالي</h3>
+        <textarea name="work_type" rows="5" class="bio-textarea" placeholder="صف طابع أعمالك هنا...">{{ designer['work_type'] }}</textarea>
+
+            <button type="submit" class="btn-save">حفظ التغييرات</button>
+        </form>
     </div>
 
     <!-- ===== PORTFOLIO ===== -->
@@ -36,7 +44,6 @@
         <div class="portfolio-grid">
             {% for work in portfolio %}
             <div class="portfolio-card">
-
                 <div class="card-image">
                     <a href="{{ url_for('static', filename=work['image_path'].split('static/')[-1]) }}" target="_blank">
                         <img src="{{ url_for('static', filename=work['image_path'].split('static/')[-1]) }}"
@@ -44,12 +51,10 @@
                     </a>
                 </div>
 
-
                 <div class="card-body">
                     <h4>{{ work['title'] }}</h4>
                     <p>{{ work['description'] }}</p>
                 </div>
-
             </div>
             {% endfor %}
         </div>

@@ -15,6 +15,7 @@ def create_app():
 
     # تهيئة قاعدة البيانات إذا لم تكن موجودة
     init_db(app)
+    add_columns_if_missing(app) 
 
     # تسجيل Blueprints
     from .auth.routes import auth_bp
@@ -44,6 +45,8 @@ def init_db(app):
         role TEXT NOT NULL,
         active INTEGER DEFAULT 1,
         bio TEXT DEFAULT '',
+        specialty TEXT DEFAULT '',   
+        work_type TEXT DEFAULT '',   
         portfolio TEXT DEFAULT ''
     )
     ''')
@@ -69,3 +72,19 @@ def init_db(app):
     ''')
     conn.commit()
     conn.close()
+def add_columns_if_missing(app):
+    conn = sqlite3.connect(app.config['DATABASE'])
+    cursor = conn.cursor()
+    cursor.execute("PRAGMA table_info(users);")
+    columns = [col[1] for col in cursor.fetchall()]
+
+    if "specialty" not in columns:
+        cursor.execute("ALTER TABLE users ADD COLUMN specialty TEXT DEFAULT ''")
+        print("تم إضافة عمود specialty")
+
+    if "work_type" not in columns:
+        cursor.execute("ALTER TABLE users ADD COLUMN work_type TEXT DEFAULT ''")
+        print("تم إضافة عمود work_type")
+
+    conn.commit()
+    conn.close()    

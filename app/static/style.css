@@ -1067,3 +1067,57 @@ th {
 .btn-secondary:hover {
     background: #dcdde1;
 }
+/* ===== PROFILE FORM ===== */
+.profile-box form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* تقليل المسافة بين الحقول */
+}
+
+.bio-textarea,
+.input-field {
+    width: 100%;
+    padding: 8px;           /* تقليل padding داخل الحقول */
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    resize: vertical;
+    min-height: 40px;       /* تقليل ارتفاع textarea الافتراضي */
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.bio-textarea {
+    min-height: 80px;       /* textarea أكبر قليلاً من input */
+}
+
+.bio-textarea:focus,
+.input-field:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 4px rgba(76, 175, 80, 0.3);
+}
+
+/* ===== LABELS ===== */
+.profile-box label {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 3px;  /* تقليل المسافة بين label والحقل */
+    font-size: 14px;
+}
+
+/* ===== BUTTON SAVE ===== */
+.btn-save {
+    align-self: flex-start;
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 20px;   /* تصغير حجم الزر قليلاً */
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-save:hover {
+    background-color: #45a049;
+}

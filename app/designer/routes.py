@@ -82,30 +82,37 @@ def profile():
 
     conn = sqlite3.connect(Config.DATABASE)
     conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
 
     if request.method == 'POST':
-        username = request.form['username']
-        bio = request.form['bio']
-        portfolio = request.form['portfolio']
+        # حقل username لا نعدله لأنه مُحدد عند التسجيل
+        bio = request.form.get('bio', '')
+        specialty = request.form.get('specialty', '')
+        work_type = request.form.get('work_type', '')
 
-        conn.execute(
-            'UPDATE users SET username=?, bio=?, portfolio=? WHERE id=?',
-            (username, bio, portfolio, session['user_id'])
+        cursor.execute(
+            '''
+            UPDATE users
+            SET bio = ?, specialty = ?, work_type = ?
+            WHERE id = ?
+            ''',
+            (bio, specialty, work_type, session['user_id'])
         )
         conn.commit()
         flash('تم حفظ التغييرات بنجاح!')
 
-    designer = conn.execute(
+    designer = cursor.execute(
         'SELECT * FROM users WHERE id=?',
         (session['user_id'],)
     ).fetchone()
 
-    portfolio = conn.execute(
+    portfolio = cursor.execute(
         'SELECT * FROM designs WHERE designer_id=? ORDER BY id DESC',
         (session['user_id'],)
     ).fetchall()
 
     conn.close()
+
     return render_template(
         'designer/profile.html',
         designer=designer,
