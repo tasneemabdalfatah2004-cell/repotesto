@@ -22,25 +22,26 @@
 <section class="portfolio-section">
     <div class="section-header">
         <h2>أعمال المصممين</h2>
+        <div class="works-tabs">
+            <span class="tab active" data-filter="latest">أحدث الأعمال</span>
+            <span class="tab" data-filter="all">جميع الأعمال</span>
+        </div>
     </div>
 
     <div class="portfolio-grid">
-        {% for work in portfolio %}
-        <a href="{{ url_for('designer.design_details', design_id=work['id']) }}">
-            <div class="portfolio-card">
-
+        {% for work in portfolio|sort(attribute='id', reverse=True) %}
+        <div class="portfolio-card">
+            <a href="{{ url_for('designer.design_details', design_id=work['id']) }}">
                 <div class="card-image">
-                        <img src="{{ url_for('static', filename=work['image_path'].split('static/')[-1]) }}"
-                            alt="{{ work['title'] }}">
+                    <img src="{{ url_for('static', filename=work['image_path'].split('static/')[-1]) }}"
+                         alt="{{ work['title'] }}">
                 </div>
-
                 <div class="card-body">
                     <h3>{{ work['title'] }}</h3>
                     <p>{{ work['description'] }}</p>
                 </div>
-
-            </div>
-        </a>
+            </a>
+        </div>
         {% endfor %}
     </div>
 </section>

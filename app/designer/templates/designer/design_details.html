@@ -37,7 +37,9 @@
         <!-- معلومات المصمم -->
         <div class="info-box">
             <h4>المصمم</h4>
-            <span class="designer-name">{{ design['designer_name'] }}</span>
+            <a href="{{ url_for('designer.profile_view', designer_id=design['designer_id']) }}" class="designer-name">
+               {{ design['designer_name'] }}
+            </a>
 
             <h4>معلومات المشروع</h4>
             <div class="design-info">
@@ -59,27 +61,52 @@
 <!-- Lightbox Overlay -->
 <div id="lightbox-overlay">
     <span class="close-lightbox">&times;</span>
+    <span class="next">&lt;</span>
+    <span class="prev">&gt;</span>
     <img src="" alt="Project Image">
 </div>
 <script>
 // ====== Lightbox Functionality ======
-const overlay = document.getElementById('lightbox-overlay');
-const overlayImg = overlay.querySelector('img');
-const closeBtn = overlay.querySelector('.close-lightbox');
+document.addEventListener("DOMContentLoaded", function () {
+    const overlay = document.getElementById('lightbox-overlay');
+    const overlayImg = overlay.querySelector('img');
+    const closeBtn = overlay.querySelector('.close-lightbox');
+    const prevBtn = overlay.querySelector('.prev');
+    const nextBtn = overlay.querySelector('.next');
+    const thumbnails = Array.from(document.querySelectorAll('.attached-images .thumbnail'));
 
-document.querySelectorAll('.attached-images .thumbnail').forEach(img => {
-    img.addEventListener('click', () => {
+    let currentIndex = 0;
+
+    function showImage(index) {
+        if (index < 0) index = thumbnails.length - 1;
+        if (index >= thumbnails.length) index = 0;
+        currentIndex = index;
+        overlayImg.src = thumbnails[currentIndex].src;
         overlay.style.display = 'flex';
-        overlayImg.src = img.src;
+    }
+
+    thumbnails.forEach((thumb, i) => {
+        thumb.addEventListener('click', () => {
+            showImage(i);
+        });
     });
-});
 
-closeBtn.addEventListener('click', () => {
-    overlay.style.display = 'none';
-});
+    closeBtn.addEventListener('click', () => {
+        overlay.style.display = 'none';
+    });
 
-overlay.addEventListener('click', e => {
-    if (e.target === overlay) overlay.style.display = 'none';
+    prevBtn.addEventListener('click', () => {
+        showImage(currentIndex - 1);
+    });
+
+    nextBtn.addEventListener('click', () => {
+        showImage(currentIndex + 1);
+    });
+
+    // اغلاق عند الضغط على الخلفية
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.style.display = 'none';
+    });
 });
 </script>
 

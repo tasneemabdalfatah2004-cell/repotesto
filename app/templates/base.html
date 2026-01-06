@@ -6,6 +6,7 @@
     <title>{% block title %}مشروعي{% endblock %}</title>
     <!-- ربط CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
 </head>
 <body>
 
@@ -47,11 +48,8 @@
     <main>
         {% block content %}{% endblock %}
     </main>
-
-    <!-- Footer بسيط -->
-    <footer>
-        <p style="text-align: center;"></p>
-    </footer>
-
+    
+<!-----------js------->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

@@ -186,3 +186,32 @@ def accept_request():
 @designer_bp.route('/reject_request')
 def reject_request():
     return redirect(url_for('home.home'))
+    #------------------------------
+    #عرض الصفحة للمستخدم
+    #----------------------------
+@designer_bp.route('/profile/<int:designer_id>')
+def profile_view(designer_id):
+    conn = sqlite3.connect(Config.DATABASE)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    # جلب معلومات المصمم
+    designer = cursor.execute(
+        'SELECT * FROM users WHERE id=? AND role="designer"',
+        (designer_id,)
+    ).fetchone()
+
+    if not designer:
+        flash('المصمم غير موجود!')
+        return redirect(url_for('home.home'))
+
+    # جلب أعمال المصمم
+    portfolio = cursor.execute(
+        'SELECT * FROM designs WHERE designer_id=? ORDER BY id DESC',
+        (designer_id,)
+    ).fetchall()
+
+    conn.close()
+
+    # عرض الصفحة بدون حقول تعديل، فقط للعرض
+    return render_template('designer/profile_view.html', designer=designer, portfolio=portfolio)    
