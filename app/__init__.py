@@ -23,13 +23,14 @@ def create_app():
     from .admin.routes import admin_bp
     from .designer.routes import designer_bp
     from .client.routes import client_bp
+    from .chat.routes import chat_bp 
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(home_bp)
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(designer_bp, url_prefix='/designer')
     app.register_blueprint(client_bp, url_prefix='/client')
-
+    app.register_blueprint(chat_bp) 
     return app
 
 
@@ -67,6 +68,16 @@ def init_db(app):
     design_id INTEGER,
     description TEXT NOT NULL,
     status TEXT DEFAULT 'مفتوح',
+    chat_enabled INTEGER DEFAULT 0, -- 0 = لا، 1 = نعم
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    ''')
+    c.execute('''
+    CREATE TABLE IF NOT EXISTS chat_messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    request_id INTEGER NOT NULL,
+    sender_id INTEGER NOT NULL,
+    message TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
     ''')
@@ -85,6 +96,13 @@ def add_columns_if_missing(app):
     if "work_type" not in columns:
         cursor.execute("ALTER TABLE users ADD COLUMN work_type TEXT DEFAULT ''")
         print("تم إضافة عمود work_type")
+    
+    cursor.execute("PRAGMA table_info(requests);")
+    req_columns = [col[1] for col in cursor.fetchall()]
+
+    if "chat_enabled" not in req_columns:
+        cursor.execute("ALTER TABLE requests ADD COLUMN chat_enabled INTEGER DEFAULT 0")
+        print("تم إضافة عمود chat_enabled لجدول requests")    
 
     conn.commit()
     conn.close()    

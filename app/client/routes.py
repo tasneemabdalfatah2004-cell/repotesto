@@ -80,3 +80,22 @@ def profile():
         'profile.html',
         client=client
     )
+@client_bp.route('/requests')
+def requests_view():
+    if not client_required():
+        flash("غير مسموح بالدخول!")
+        return redirect(url_for('auth.login'))
+
+    conn = sqlite3.connect(Config.DATABASE)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    requests = cursor.execute("""
+        SELECT r.id, r.description, r.status, r.designer_id
+        FROM requests r
+        WHERE r.client_id = ?
+        ORDER BY r.created_at DESC
+    """, (session['user_id'],)).fetchall()
+    conn.close()
+
+    return render_template('client/client_requests.html', requests=requests)    

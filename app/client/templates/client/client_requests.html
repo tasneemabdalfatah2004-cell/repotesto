@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}طلباتك - منصتي{% endblock %}
+
+{% block content %}
+
+<section class="client-requests">
+    <h2>طلباتك السابقة</h2>
+
+    {% if requests %}
+        <div class="requests-grid">
+            {% for req in requests %}
+            <div class="request-card">
+                <div class="request-header">
+                    <span>الطلب:</span>
+                    <p>{{ req['description'] }}</p>
+                </div>
+
+                <div class="request-status">
+                    <span>الحالة:</span>
+                    <p class="status {{ req['status'] | lower }}">{{ req['status'] }}</p>
+                </div>
+
+                {% if req['status'] == 'مقبول' %}
+                <a href="{{ url_for('chat.chat', request_id=req['id']) }}"
+                   class="btn-chat">
+                   بدء المحادثة مع المصمم
+                </a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="no-requests">لم تقم بإرسال أي طلب بعد.</p>
+    {% endif %}
+</section>
+
+{% endblock %}

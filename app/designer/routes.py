@@ -180,12 +180,48 @@ def designer_requests():
         requests=requests
     )
 
-@designer_bp.route('/accept_request')
-def accept_request():
-    return redirect(url_for('home.home'))
-@designer_bp.route('/reject_request')
-def reject_request():
-    return redirect(url_for('home.home'))
+@designer_bp.route('/accept_request/<int:request_id>')
+def accept_request(request_id):
+    if not designer_required():
+        flash('غير مسموح بالدخول')
+        return redirect(url_for('auth.login'))
+
+    conn = sqlite3.connect(Config.DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        UPDATE requests
+        SET status = 'مقبول', chat_enabled = 1
+        WHERE id = ?
+    """, (request_id,))
+
+    conn.commit()
+    conn.close()
+
+    flash("تم قبول الطلب! المحادثة مع العميل مفتوحة الآن.")
+    return redirect(url_for('designer.designer_requests'))
+
+
+@designer_bp.route('/reject_request/<int:request_id>')
+def reject_request(request_id):
+    if not designer_required():
+        flash('غير مسموح بالدخول')
+        return redirect(url_for('auth.login'))
+
+    conn = sqlite3.connect(Config.DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        UPDATE requests
+        SET status = 'مرفوض'
+        WHERE id = ?
+    """, (request_id,))
+
+    conn.commit()
+    conn.close()
+
+    flash("تم رفض الطلب.")
+    return redirect(url_for('designer.designer_requests'))
     #------------------------------
     #عرض الصفحة للمستخدم
     #----------------------------

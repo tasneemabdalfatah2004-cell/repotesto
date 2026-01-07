@@ -12,8 +12,7 @@
     <ul>
         {% for req in requests %}
             <li>
-                {{ req.description }} - الحالة: {{ req.status }}
-                <a href="{{ url_for('client.open_chat', request_id=req.id) }}">💬 دردشة</a>
+                {{ req.description }} - الحالة: {{ req.status }}محادثة</a>
             </li>
         {% else %}
             <li>لا توجد طلبات حالياً</li>

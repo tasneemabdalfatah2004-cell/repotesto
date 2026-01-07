@@ -38,7 +38,7 @@
                         <a href="{{ url_for('designer.accept_request', request_id=req['id']) }}" class="btn accept">قبول</a>
                         <a href="{{ url_for('designer.reject_request', request_id=req['id']) }}" class="btn reject">رفض</a>
                     {% elif req['status'] == 'مقبول' %}
-                        <a href="{{ url_for('designer.chat', request_id=req['id']) }}" class="btn chat">💬 محادثة</a>
+                        <a href="{{ url_for('chat.chat', request_id=req['id']) }}" class="btn chat">💬 محادثة</a>
                     {% endif %}
                 </div>
 

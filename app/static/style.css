@@ -1195,3 +1195,153 @@ th {
     right: 20px; top: 50%;
     transform: translateY(-50%);
 }
+.client-requests {
+    max-width: 1000px;
+    margin: 30px auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 0 15px;
+}
+
+.client-requests h2 {
+    color: #2c3e50;
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+    text-align: center;
+}
+
+.requests-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.request-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+}
+
+.request-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.request-header span,
+.request-status span {
+    font-weight: 600;
+    color: #555;
+}
+
+.request-header p,
+.request-status p {
+    margin: 6px 0 0 0;
+}
+
+.status {
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    display: inline-block;
+    font-size: 0.9rem;
+}
+
+.status.مفتوح {
+    background-color: #e0f0ff;
+    color: #007bff;
+}
+
+.status.مغلوق {
+    background-color: #ffeaea;
+    color: #e74c3c;
+}
+
+.status.مقبول {
+    background-color: #e6f7e6;
+    color: #28a745;
+}
+
+/* زر المحادثة */
+.btn-chat {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 8px 14px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.btn-chat:hover {
+    background-color: #0056b3;
+}
+
+.no-requests {
+    text-align: center;
+    color: #555;
+    margin-top: 30px;
+}
+
+.chat-container {
+    max-width: 700px;
+    margin: 30px auto;
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.messages {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+
+.message {
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    width: fit-content;
+    max-width: 80%;
+}
+
+.message.sent {
+    background: #2ecc71;
+    color: #fff;
+    margin-left: auto;
+}
+
+.message.received {
+    background: #3498db;
+    color: #fff;
+    margin-right: auto;
+}
+
+.sender {
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.chat-form {
+    display: flex;
+    gap: 5px;
+}
+
+.chat-form input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.chat-form button {
+    padding: 8px 15px;
+    background: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+}

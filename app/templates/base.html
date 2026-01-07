@@ -20,6 +20,9 @@
             <div class="nav-center">
                 <a href="{{ url_for('home.home') }}">الصفحة الرئيسية</a>
                 <a href="{{ url_for('client.profile') if session['role'] == 'client' else url_for('designer.profile') }}">الملف الشخصي</a>
+                 {% if session['role'] == 'client' %}
+                    <a href="{{ url_for('client.requests_view') }}">طلباتي</a>
+                 {% endif %}
                 {% if session['role'] == 'designer' %}
                     <a href="{{ url_for('designer.add_design') }}">إضافة عمل</a>
                     <a href="{{ url_for('designer.designer_requests') }}">الطلبات</a>
