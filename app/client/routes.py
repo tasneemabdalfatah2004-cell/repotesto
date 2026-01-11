@@ -88,14 +88,19 @@ def requests_view():
 
     conn = sqlite3.connect(Config.DATABASE)
     conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
 
-    requests = cursor.execute("""
-        SELECT r.id, r.description, r.status, r.designer_id
+    requests = conn.execute("""
+        SELECT
+            r.id,
+            r.description,
+            r.status,
+            r.created_at,
+            u.username AS designer_name
         FROM requests r
+        LEFT JOIN users u ON r.designer_id = u.id
         WHERE r.client_id = ?
         ORDER BY r.created_at DESC
     """, (session['user_id'],)).fetchall()
-    conn.close()
 
-    return render_template('client/client_requests.html', requests=requests)    
+    conn.close()
+    return render_template('client/client_requests.html', requests=requests)   

@@ -1345,3 +1345,21 @@ th {
     border: none;
     border-radius: 5px;
 }
+.status {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.status-مفتوح { background: #3b82f6; }
+.status-مقبول { background: #10b981; }
+.status-مرفوض { background: #ef4444; }
+.empty {
+    background: #f9fafb;
+    padding: 30px;
+    text-align: center;
+    border-radius: 12px;
+    color: #6b7280;
+}

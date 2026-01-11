@@ -1,38 +1,62 @@
 {% extends 'base.html' %}
-
-{% block title %}طلباتك - منصتي{% endblock %}
+{% block title %}طلباتي{% endblock %}
 
 {% block content %}
-
 <section class="client-requests">
-    <h2>طلباتك السابقة</h2>
+
+    <h2 class="page-title">📦 طلباتك</h2>
 
     {% if requests %}
-        <div class="requests-grid">
-            {% for req in requests %}
-            <div class="request-card">
-                <div class="request-header">
-                    <span>الطلب:</span>
-                    <p>{{ req['description'] }}</p>
+    <div class="requests-wrapper">
+
+        {% for req in requests %}
+        <div class="request-card">
+
+            <!-- العنوان -->
+            <div class="card-header">
+                <div>
+                    <h3>🎨 طلب تصميم</h3>
+                    <span class="date">
+                        {{ req['created_at'][:10] }}
+                    </span>
                 </div>
 
-                <div class="request-status">
-                    <span>الحالة:</span>
-                    <p class="status {{ req['status'] | lower }}">{{ req['status'] }}</p>
+                <span class="status status-{{ req['status'] }}">
+                    {{ req['status'] }}
+                </span>
+            </div>
+
+            <!-- الوصف -->
+            <div class="card-body">
+                <p class="label">📝 وصف الطلب</p>
+                <p class="description">
+                    {{ req['description'] }}
+                </p>
+            </div>
+
+            <!-- معلومات -->
+            <div class="card-footer">
+                <div class="designer">
+                    👤 المصمم:
+                    <strong>
+                        {{ req['designer_name'] or 'بانتظار القبول' }}
+                    </strong>
                 </div>
 
                 {% if req['status'] == 'مقبول' %}
-                <a href="{{ url_for('chat.chat', request_id=req['id']) }}"
-                   class="btn-chat">
-                   بدء المحادثة مع المصمم
+                <a href="{{ url_for('chat.chat', request_id=req['id']) }}" class="chat-btn">
+                    💬 محادثة
                 </a>
                 {% endif %}
             </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p class="no-requests">لم تقم بإرسال أي طلب بعد.</p>
-    {% endif %}
-</section>
 
+        </div>
+        {% endfor %}
+
+    </div>
+    {% else %}
+        <p class="empty">لا يوجد طلبات حتى الآن</p>
+    {% endif %}
+
+</section>
 {% endblock %}
