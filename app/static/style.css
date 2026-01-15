@@ -1363,3 +1363,13 @@ th {
     border-radius: 12px;
     color: #6b7280;
 }
+.ai-nav-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    margin-left: 10px;
+    position: relative;
+    z-index: 10;  /* مهم */
+}

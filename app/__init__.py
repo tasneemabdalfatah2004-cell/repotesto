@@ -24,6 +24,7 @@ def create_app():
     from .designer.routes import designer_bp
     from .client.routes import client_bp
     from .chat.routes import chat_bp 
+    from .ai import ai_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(home_bp)
@@ -31,6 +32,7 @@ def create_app():
     app.register_blueprint(designer_bp, url_prefix='/designer')
     app.register_blueprint(client_bp, url_prefix='/client')
     app.register_blueprint(chat_bp) 
+    app.register_blueprint(ai_bp, url_prefix="/ai")
     return app
 
 
