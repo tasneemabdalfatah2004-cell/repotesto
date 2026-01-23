@@ -6,28 +6,38 @@
 
     <!-- header -->
     <div class="chat-header">
-        <div class="chat-user">
-            💬 المحادثة مع <strong>{{ other_user_name }}</strong>
-        </div>
+        💬 المحادثة مع <strong>{{ other_user_name }}</strong>
     </div>
 
     <!-- messages -->
     <div class="chat-messages" id="chatBox">
         {% for msg in messages %}
             {% if msg['sender_id'] == session['user_id'] %}
-                <!-- my message -->
                 <div class="message-row me">
                     <div class="message-bubble me">
                         {{ msg['message'] }}
+                        {% if msg['image_path'] %}
+                            <div class="chat-image-container">
+                                <img src="{{ url_for('static', filename=msg['image_path']) }}"
+                                     class="chat-image"
+                                     onclick="openImageModal(this)">
+                            </div>
+                        {% endif %}
                         <span class="time">أنت</span>
                     </div>
                 </div>
             {% else %}
-                <!-- other message -->
                 <div class="message-row other">
                     <div class="message-bubble other">
                         <strong>{{ msg['username'] }}</strong><br>
                         {{ msg['message'] }}
+                        {% if msg['image_path'] %}
+                            <div class="chat-image-container">
+                                <img src="{{ url_for('static', filename=msg['image_path']) }}"
+                                     class="chat-image"
+                                     onclick="openImageModal(this)">
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             {% endif %}
@@ -35,21 +45,25 @@
     </div>
 
     <!-- input -->
-    <form method="POST" class="chat-input">
-        <input
-            type="text"
-            name="message"
-            placeholder="اكتب رسالتك هنا..."
-            required
-            autocomplete="off"
-        >
+    <form method="POST" enctype="multipart/form-data" class="chat-input">
+        <input type="text" name="message" placeholder="اكتب رسالتك هنا..." autocomplete="off">
+    
+       <!-- زر رفع الصورة -->
+        <label for="imageInput" class="image-upload-btn">📎</label>
+        <input type="file" name="image" id="imageInput" accept="image/*" style="display:none;">
+    
         <button type="submit">➤</button>
-    </form>
+   </form>
+</div>
 
+<!-- Image Modal -->
+<div id="imageModal" class="modal">
+    <span class="close" onclick="closeImageModal()">&times;</span>
+    <img class="modal-content" id="modalImage">
+    <a id="downloadLink" download class="download-btn">💾 تحميل</a>
 </div>
 
 <style>
-/* ===== container ===== */
 .chat-container {
     max-width: 800px;
     margin: 30px auto;
@@ -60,17 +74,13 @@
     height: 80vh;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
-
-/* ===== header ===== */
 .chat-header {
     padding: 15px 20px;
-    background: #ffffff;
+    background: #fff;
     border-bottom: 1px solid #ddd;
     border-radius: 15px 15px 0 0;
     font-size: 18px;
 }
-
-/* ===== messages ===== */
 .chat-messages {
     flex: 1;
     padding: 20px;
@@ -79,88 +89,70 @@
     flex-direction: column;
     gap: 12px;
 }
-
-/* ===== message rows ===== */
-.message-row {
+.image-upload-btn {
+    cursor: pointer;
+    font-size: 22px;
+    padding: 0 10px;
     display: flex;
+    align-items: center;
 }
-
-.message-row.me {
-    justify-content: flex-end;
-}
-
-.message-row.other {
-    justify-content: flex-start;
-}
-
-/* ===== bubbles ===== */
+.message-row { display: flex; }
+.message-row.me { justify-content: flex-end; }
+.message-row.other { justify-content: flex-start; }
 .message-bubble {
-    max-width: 65%;
+    max-width: 70%;
     padding: 12px 15px;
     border-radius: 18px;
     font-size: 15px;
     line-height: 1.5;
+    word-wrap: break-word;
 }
-
-.message-bubble.me {
-    background: #0084ff;
-    color: #fff;
-    border-bottom-right-radius: 5px;
-}
-
-.message-bubble.other {
-    background: #ffffff;
-    color: #333;
-    border-bottom-left-radius: 5px;
-}
-
-/* ===== time ===== */
-.time {
-    display: block;
-    font-size: 11px;
-    opacity: 0.7;
-    margin-top: 4px;
-}
-
-/* ===== input ===== */
+.message-bubble.me { background: #0084ff; color: #fff; border-bottom-right-radius: 5px; }
+.message-bubble.other { background: #fff; color: #333; border-bottom-left-radius: 5px; }
+.time { display: block; font-size: 11px; opacity: 0.7; margin-top: 4px; }
 .chat-input {
     display: flex;
     padding: 15px;
-    background: #ffffff;
+    background: #fff;
     border-top: 1px solid #ddd;
     border-radius: 0 0 15px 15px;
 }
-
-.chat-input input {
-    flex: 1;
-    padding: 12px 15px;
-    border-radius: 25px;
-    border: 1px solid #ccc;
-    outline: none;
-    font-size: 15px;
-}
-
+.chat-input input[type=text] { flex: 1; padding: 12px 15px; border-radius: 25px; border: 1px solid #ccc; outline: none; font-size: 15px; }
+.chat-input input[type=file] { margin-left: 10px; }
 .chat-input button {
     margin-left: 10px;
-    width: 45px;
-    height: 45px;
+    width: 45px; height: 45px;
     border-radius: 50%;
     border: none;
-    background: #0084ff;
-    color: #fff;
-    font-size: 18px;
-    cursor: pointer;
+    background: #0084ff; color: #fff; font-size: 18px; cursor: pointer;
 }
+.chat-input button:hover { background: #006fe0; }
+.chat-image-container { margin-top: 8px; }
+.chat-image { max-width: 100%; cursor: pointer; border-radius: 10px; transition: transform 0.2s; }
+.chat-image:hover { transform: scale(1.02); }
+/* Modal */
+.modal { display: none; position: fixed; z-index: 999; padding-top: 60px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); }
+.modal-content { margin: auto; display: block; max-width: 90%; max-height: 80%; border-radius: 10px; }
+.close { position: absolute; top: 15px; right: 35px; color: #fff; font-size: 40px; font-weight: bold; cursor: pointer; }
+.download-btn { position: absolute; bottom: 30px; right: 35px; padding: 10px 20px; background: #0084ff; color: #fff; text-decoration: none; border-radius: 5px; font-size: 16px; }
+.download-btn:hover { background: #006fe0; }
 
-.chat-input button:hover {
-    background: #006fe0;
-}
 </style>
 
 <script>
-/* auto scroll */
 const chatBox = document.getElementById("chatBox");
 chatBox.scrollTop = chatBox.scrollHeight;
-</script>
 
+function openImageModal(img) {
+    const modal = document.getElementById("imageModal");
+    const modalImg = document.getElementById("modalImage");
+    const downloadLink = document.getElementById("downloadLink");
+    modal.style.display = "block";
+    modalImg.src = img.src;
+    downloadLink.href = img.src;
+}
+function closeImageModal() {
+    document.getElementById("imageModal").style.display = "none";
+}
+</script>
 {% endblock %}

@@ -105,6 +105,15 @@ def add_columns_if_missing(app):
     if "chat_enabled" not in req_columns:
         cursor.execute("ALTER TABLE requests ADD COLUMN chat_enabled INTEGER DEFAULT 0")
         print("تم إضافة عمود chat_enabled لجدول requests")    
+    # chat_messages table
+    cursor.execute("PRAGMA table_info(chat_messages);")
+    chat_columns = [col[1] for col in cursor.fetchall()]
+
+    if "image_path" not in chat_columns:
+        cursor.execute(
+            "ALTER TABLE chat_messages ADD COLUMN image_path TEXT"
+        )
+        print("تم إضافة عمود image_path لجدول chat_messages")    
 
     conn.commit()
     conn.close()    
