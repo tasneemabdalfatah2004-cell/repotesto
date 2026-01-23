@@ -1,6 +1,8 @@
 from flask import request, jsonify
 from . import ai_bp
 from .chat_ai import run_ai_chat
+from .analyze_prompt import analyze_conversation
+
 
 conversation_history = []
 
@@ -20,3 +22,17 @@ def chat_route():
 
     except Exception as e:
         return jsonify({"reply": f"حدث خطأ أثناء الاتصال: {str(e)}", "finished": False})
+@ai_bp.route("/analyze", methods=["POST"])
+def analyze():
+    conversation = request.json.get("conversation")
+
+    if not conversation:
+        return jsonify({"error": "No conversation"}), 400
+
+    result = analyze_conversation(conversation)
+
+    if not result:
+        return jsonify({"error": "Analyze failed"}), 500
+
+    return jsonify(result)
+
