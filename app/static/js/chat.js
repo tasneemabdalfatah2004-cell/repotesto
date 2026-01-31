@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(res=>res.json())
         .then(data=>{
             addMessage("AI", data.reply);
-            if(data.finished) addMessage("AI","✅ تم فهم الطلب");
+            if(data.finished) addMessage("AI", data.result);
         })
         .catch(()=>addMessage("AI","حدث خطأ أثناء الاتصال"));
     }
