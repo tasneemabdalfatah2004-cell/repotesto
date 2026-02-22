@@ -2,7 +2,7 @@ from flask import request, jsonify
 from . import ai_bp
 from .chat_ai import run_ai_chat
 from .analyze_prompt import analyze_conversation
-
+from .designer_analysis import analyze_designer
 
 conversation_history = []
 
@@ -38,4 +38,16 @@ def analyze():
         return jsonify({"error": "Analyze failed"}), 500
 
     return jsonify(result)
+@ai_bp.route("/analyze_designer", methods=["POST"])
+def analyze_designer_route():
+    data = request.json
+    designer_text = data.get("designer_text")
 
+    if not designer_text:
+        return jsonify({"error": "No designer text provided"}), 400
+
+    try:
+        result = analyze_designer(designer_text)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": "analyze failed"}), 500

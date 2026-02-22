@@ -6,7 +6,7 @@ from google.genai import types
 from dotenv import load_dotenv
 
 load_dotenv()
-GEMINI_API_KEY = "AIzaSyBed-0mPZDMBli1SSYhcDaq8tWrGMhaDXY"
+GEMINI_API_KEY = "AIzaSyCHw1kJwkr1RbbUSNB4_GS-HLpdJBwbGWE"
 
 if not GEMINI_API_KEY:
     raise ValueError("GEMINI_API_KEY environment variable not set.")
