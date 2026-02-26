@@ -33,20 +33,15 @@ DESIGNER_PROMPT = """
 
 الخصائص:
 
-design_type:
-logo, poster, mockup, ui, visual_identity, banner, social_post, flyer, brochure, packaging
+**design_type**: logo, poster, mockup, ui, visual_identity, banner, social_post, flyer, brochure, packaging
+**sub_type**: awareness_post, opening_post, promotional_post, educational_post, product_showcase, event_announcement, brand_intro
+**style**: modern, classic, minimal, luxury, playful, technical, elegant, bold, flat, 3d, futuristic, vintage
+**colors/mood**: bright_colors, dark_colors, pastel_colors, monochrome, warm_tones, cool_tones, high_contrast, soft_contrast
+**audience**: kids, teenagers, young_adults, professionals, businesses, general_public
+**project_field**: education, technology, healthcare, real_estate, ecommerce, finance, food, fashion, entertainment, nonprofit
+**platform_or_usage**: mobile_app, web_app, dashboard, landing_page, social_media, print, presentation
+**special_requirements**: responsive, animation, branding_guidelines, accessibility, multilanguage, fast_loading, seo_friendly
 
-style:
-modern, classic, minimal, luxury, playful, technical, elegant, bold, flat, 3d, futuristic, vintage
-
-project_field:
-education, technology, healthcare, real_estate, ecommerce, finance, food, fashion, entertainment, nonprofit
-
-colors_mood:
-bright_colors, dark_colors, pastel_colors, monochrome, warm_tones, cool_tones, high_contrast, soft_contrast
-
-audience:
-kids, teenagers, young_adults, professionals, businesses, general_public
 """
 
 def analyze_designer(designer_text):
@@ -67,6 +62,6 @@ def analyze_designer(designer_text):
     for part in response.parts:
         if part.text:
             output_text += part.text
-
+    print(output_text)
     # نرجع JSON جاهز للاستخدام
     return json.loads(output_text.strip())

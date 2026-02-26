@@ -3,7 +3,7 @@ from . import ai_bp
 from .chat_ai import run_ai_chat
 from .analyze_prompt import analyze_conversation
 from .designer_analysis import analyze_designer
-
+from flask import session
 conversation_history = []
 
 @ai_bp.route("/chat", methods=["POST"])
@@ -17,11 +17,22 @@ def chat_route():
         ai_reply = run_ai_chat(conversation_history, False)
         conversation_history.append(("الذكاء", ai_reply))
         finished = "أصبحت لدي صورة واضحة" in ai_reply
+        best_designers_html = ""
 
-        if(finished):
+        if finished:
+            # تحليل المحادثة
             result = analyze_conversation(conversation_history, False)
 
-        return jsonify({"reply": ai_reply, "finished": finished, "result":result if finished else ""})
+            # إرسال تحليل المستخدم للـ best_designers route
+            resp = client.post("/best_designers", json={"user_analysis": result})
+            if resp.status_code == 200:
+                best_designers_html = resp.data.decode("utf-8")
+
+        return jsonify({
+            "reply": ai_reply,
+            "finished": finished,
+            "best_designers_html": best_designers_html
+        })
 
     except Exception as e:
         return jsonify({"reply": f"حدث خطأ أثناء الاتصال: {str(e)}", "finished": False})

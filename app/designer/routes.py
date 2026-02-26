@@ -1,22 +1,17 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 import sqlite3
+import json
 import os
 import uuid
 from werkzeug.utils import secure_filename
 from config import Config
+from app.ai.designer_analysis import analyze_designer
 
 designer_bp = Blueprint('designer', __name__, template_folder='templates')
 
 # التحقق من صلاحية المصمم
 def designer_required():
     return 'role' in session and session['role'] == 'designer'
-
-
-
-# ----------------------------
-# إضافة عمل جديد (متوافق مع عدة صور)
-# ----------------------------
-
 @designer_bp.route('/add_design', methods=['GET', 'POST'])
 def add_design():
     if not designer_required():
@@ -37,35 +32,73 @@ def add_design():
 
         design_id = None
 
+        # ------------------------
+        # حفظ الصور والتصميم
+        # ------------------------
         for i, file in enumerate(images):
-            ext = file.filename.rsplit('.',1)[1].lower()
+            ext = file.filename.rsplit('.', 1)[1].lower()
             if ext not in Config.ALLOWED_EXTENSIONS:
                 flash('أحد الملفات غير مدعوم')
                 conn.close()
                 return redirect(request.url)
 
-            # اسم فريد لكل صورة
             unique_filename = f"{uuid.uuid4().hex}.{ext}"
             filepath = os.path.join(Config.UPLOAD_FOLDER, unique_filename)
             file.save(filepath)
             db_path = f"uploads/{unique_filename}"
 
             if i == 0:
-                # الصورة الأولى = غلاف المشروع
                 cursor.execute(
-                    'INSERT INTO designs (designer_id, title, description, image_path) VALUES (?,?,?,?)',
+                    '''
+                    INSERT INTO designs (designer_id, title, description, image_path)
+                    VALUES (?, ?, ?, ?)
+                    ''',
                     (session['user_id'], title, description, db_path)
                 )
                 design_id = cursor.lastrowid
 
-            # كل الصور تخزن في design_images
             cursor.execute(
-                'INSERT INTO design_images (design_id, image_path) VALUES (?,?)',
+                'INSERT INTO design_images (design_id, image_path) VALUES (?, ?)',
                 (design_id, db_path)
             )
 
+        # ------------------------
+        # 🔍 تحليل شخصية المصمم بعد إضافة عمل جديد
+        # ------------------------
+
+        cursor.execute(
+            "SELECT bio, specialty, work_type FROM users WHERE id=?",
+            (session['user_id'],)
+        )
+        designer = cursor.fetchone()
+
+        if designer:
+            bio, specialty, work_type = designer
+
+            designer_text = f"""
+                     التخصص: {specialty}
+                     نبذة المصمم: {bio}
+                   نوع الأعمال: {work_type}
+
+                     العمل الجديد:
+                    العنوان: {title}
+                     الوصف: {description}
+                             """
+
+            try:
+                analysis_result = analyze_designer(designer_text)
+
+                cursor.execute(
+                    "UPDATE users SET analysis_result=? WHERE id=?",
+                    (json.dumps(analysis_result, ensure_ascii=False), session['user_id'])
+                )
+
+            except Exception as e:
+                print("خطأ أثناء تحليل المصمم:", e)
+
         conn.commit()
         conn.close()
+
         flash('تم إضافة العمل بنجاح!')
         return redirect(url_for('home.home'))
 
