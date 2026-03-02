@@ -38,7 +38,9 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(res=>res.json())
         .then(data=>{
             addMessage("AI", data.reply);
-            if(data.finished) addMessage("AI", data.result);
+            if(data.finished) {
+                window.location.href = data.best_designers_url
+            }
         })
         .catch(()=>addMessage("AI","حدث خطأ أثناء الاتصال"));
     }

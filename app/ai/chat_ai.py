@@ -5,7 +5,7 @@ from google.genai import types
 from dotenv import load_dotenv
 
 load_dotenv()
-GEMINI_API_KEY = "AIzaSyCHw1kJwkr1RbbUSNB4_GS-HLpdJBwbGWE"
+GEMINI_API_KEY = os.environ['GEMINI_API_KEY']
 
 if not GEMINI_API_KEY:
     raise ValueError("GEMINI_API_KEY environment variable not set.")
@@ -96,7 +96,7 @@ def run_ai_chat(conversation_history, is_local=False):
         else:
             # Use Gemini API
             response = client.models.generate_content(
-                model="gemini-2.5-flash",
+                model="gemma-3-27b-it",
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     response_modalities=["TEXT"],  # change to IMAGE if you want image output

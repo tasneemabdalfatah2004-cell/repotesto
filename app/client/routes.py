@@ -114,23 +114,22 @@ def calculate_matching_score(user_result, designer_result):
         total += 1
     return score / total if total > 0 else 0
 
+
+
 @client_bp.route("/best_designers", methods=["POST"])
 def best_designers():
-    """
-    هذا الروت يستدعى بعد انتهاء تحليل محادثة العميل مع الـ AI.
-    request.json يجب أن يحتوي على:
-    { "user_analysis": {...} }  # ناتج analyze_conversation
-    """
     try:
-        user_result = request.json.get("user_analysis")
-        if not user_result:
+        # التأكد من وصول بيانات JSON
+        data = request.get_json()
+        if not data or "user_analysis" not in data:
             return jsonify({"error": "لا يوجد تحليل للمستخدم."}), 400
+            
+        user_result = data.get("user_analysis")
 
         conn = sqlite3.connect("database/db.sqlite")
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
 
-        # جلب جميع المصممين
         cursor.execute("SELECT id, username, analysis_result FROM users WHERE role='designer'")
         designers = cursor.fetchall()
 
@@ -142,14 +141,81 @@ def best_designers():
                 best_designers.append({
                     "id": d['id'],
                     "username": d['username'],
-                    "score": round(score*100, 2)  # نسبة مئوية
+                    "score": round(score*100, 2)
                 })
 
-        # فرز حسب أفضل تطابق
+        # ترتيب حسب أفضل تطابق وأخذ أفضل 3
         best_designers = sorted(best_designers, key=lambda x: x['score'], reverse=True)[:3]
-
         conn.close()
-        return render_template("client/best_designers.html", designers=best_designers)
+
+        # تجهيز قائمة ids و scores لتمريرها في الرابط
+        ids_list = [str(d['id']) for d in best_designers]
+        scores_list = [str(d['score']) for d in best_designers]
+
+        # إنشاء الرابط للـ GET route
+        get_url = url_for(
+            "client.show_best_designers",  # اسم الـ GET route
+            ids=",".join(ids_list),
+            scores=",".join(scores_list)
+        )
+
+        print(get_url)
+
+        # إرجاع الرابط كـ JSON
+        return jsonify({"url": get_url})
 
     except Exception as e:
+        print(f"Error: {e}")
         return jsonify({"error": str(e)}), 500
+    
+
+@client_bp.route("/best_designers", methods=["GET"])
+def show_best_designers():
+    """
+    GET route لاستعراض أفضل المصممين مع درجات التطابق.
+    تمرير المعرفات والدرجات عبر query params:
+    ids=3,7,12
+    scores=85,72,68
+    """
+    try:
+        ids_param = request.args.get("ids")       # "3,7,12"
+        scores_param = request.args.get("scores") # "85,72,68"
+
+        if not ids_param or not scores_param:
+            return "لم يتم تحديد المعرفات أو الدرجات.", 400
+
+        ids_list = [int(i) for i in ids_param.split(",") if i.strip().isdigit()]
+        scores_list = [float(s) for s in scores_param.split(",") if s.strip()]
+
+        if len(ids_list) != len(scores_list):
+            return "عدد المعرفات لا يطابق عدد الدرجات.", 400
+
+        # جلب بيانات المصممين من قاعدة البيانات
+        conn = sqlite3.connect("database/db.sqlite")
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+
+        placeholder = ",".join(["?"] * len(ids_list))
+        query = f"SELECT id, username, bio, specialty, work_type FROM users WHERE id IN ({placeholder})"
+        cursor.execute(query, ids_list)
+        designers = cursor.fetchall()
+        conn.close()
+
+        # دمج المعلومات مع درجات التطابق
+        designers_list = []
+        id_to_score = dict(zip(ids_list, scores_list))
+
+        for d in designers:
+            designers_list.append({
+                "id": d["id"],
+                "username": d["username"],
+                "bio": d["bio"],
+                "specialty": d["specialty"],
+                "work_type": d["work_type"],
+                "score": id_to_score.get(d["id"], 0)  # الدرجة المرتبطة بالـ id
+            })
+
+        return render_template("client/best_designers.html", designers=designers_list)
+
+    except Exception as e:
+        return f"حدث خطأ: {str(e)}", 500

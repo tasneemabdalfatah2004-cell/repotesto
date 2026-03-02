@@ -1,4 +1,5 @@
 from flask import request, jsonify
+import requests
 from . import ai_bp
 from .chat_ai import run_ai_chat
 from .analyze_prompt import analyze_conversation
@@ -17,21 +18,29 @@ def chat_route():
         ai_reply = run_ai_chat(conversation_history, False)
         conversation_history.append(("الذكاء", ai_reply))
         finished = "أصبحت لدي صورة واضحة" in ai_reply
-        best_designers_html = ""
+        best_designers_url = ""
 
         if finished:
             # تحليل المحادثة
             result = analyze_conversation(conversation_history, False)
 
             # إرسال تحليل المستخدم للـ best_designers route
-            resp = client.post("/best_designers", json={"user_analysis": result})
+            resp = requests.post(
+                "http://127.0.0.1:5000/client/best_designers",
+                json={"user_analysis": result}
+            )
+
             if resp.status_code == 200:
-                best_designers_html = resp.data.decode("utf-8")
+                data = resp.json()  # نقرأ الـ JSON المرسل من السيرفر
+                best_designers_url = data.get("url")  # هذا الرابط الصحيح مع ids و scores
+                print("رابط أفضل المصممين:", best_designers_url)
+            else:
+                print("خطأ:", resp.status_code, resp.text)
 
         return jsonify({
             "reply": ai_reply,
             "finished": finished,
-            "best_designers_html": best_designers_html
+            "best_designers_url": best_designers_url
         })
 
     except Exception as e:

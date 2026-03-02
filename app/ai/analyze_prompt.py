@@ -1,3 +1,4 @@
+import re
 import subprocess
 import os
 import json
@@ -6,7 +7,7 @@ from google.genai import types
 from dotenv import load_dotenv
 
 load_dotenv()
-GEMINI_API_KEY = "AIzaSyCHw1kJwkr1RbbUSNB4_GS-HLpdJBwbGWE"
+GEMINI_API_KEY = os.environ['GEMINI_API_KEY']
 
 if not GEMINI_API_KEY:
     raise ValueError("GEMINI_API_KEY environment variable not set.")
@@ -47,8 +48,6 @@ def analyze_conversation(conversation_history, is_local=False):
     for role, message in conversation_history:
         prompt += f"{role}: {message}\n"
 
-    print(prompt)
-
     try:
         if is_local:
             # استخدم نموذج Gemma3 محليًا
@@ -78,7 +77,7 @@ def analyze_conversation(conversation_history, is_local=False):
         else:
             # استخدم Gemini API
             response = client.models.generate_content(
-                model="gemini-2.5-flash",
+                model="gemma-3-27b-it",
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     response_modalities=["TEXT"],  # نريد نص لتفسيره كـ JSON
@@ -90,10 +89,19 @@ def analyze_conversation(conversation_history, is_local=False):
             for part in response.parts:
                 if part.text:
                     output_text += part.text
-
+                    
             # محاولة تحويل الناتج إلى JSON
             try:
-                return json.loads(output_text.strip())
+                # Extract first JSON object between { ... }
+                match = re.search(r"\{.*\}", output_text, re.DOTALL)
+
+                if not match:
+                    print("No JSON object found.")
+                    print(output_text)
+                    return None
+
+                json_text = match.group()
+                return json.loads(json_text)
             except json.JSONDecodeError:
                 print("تعذر تحليل إخراج Gemini API إلى JSON. الإخراج الخام:")
                 print(output_text.strip())

@@ -1,9 +1,11 @@
 import json
 from google import genai
 from google.genai import types
+import os
+import re
 
 # مفتاح Gemini API
-GEMINI_API_KEY = "AIzaSyCHw1kJwkr1RbbUSNB4_GS-HLpdJBwbGWE"
+GEMINI_API_KEY = os.environ['GEMINI_API_KEY']
 
 if not GEMINI_API_KEY:
     raise ValueError("GEMINI_API_KEY environment variable not set.")
@@ -51,17 +53,33 @@ def analyze_designer(designer_text):
     prompt = DESIGNER_PROMPT + "\n\nالنص:\n" + designer_text
 
     response = client.models.generate_content(
-        model="gemini-2.5-flash",
+        model="gemma-3-27b-it",
         contents=prompt,
         config=types.GenerateContentConfig(
             response_modalities=["TEXT"]
         )
     )
 
+    # دمج جميع النصوص الناتجة
     output_text = ""
-    for part in response.parts:
-        if part.text:
+    for part in getattr(response, "parts", []):
+        if getattr(part, "text", None):
             output_text += part.text
+
+    print("RAW OUTPUT FROM MODEL:")
     print(output_text)
-    # نرجع JSON جاهز للاستخدام
-    return json.loads(output_text.strip())
+
+    # استخراج أول كائن JSON صالح من النص
+    match = re.search(r"\{.*\}", output_text, re.DOTALL)
+    if not match:
+        print("لم يتم العثور على JSON صالح في إخراج النموذج:")
+        print(output_text)
+        return None
+
+    json_text = match.group()
+    try:
+        return json.loads(json_text)
+    except json.JSONDecodeError as e:
+        print("خطأ عند تحويل JSON:", e)
+        print("النص الخام:", json_text)
+        return None
