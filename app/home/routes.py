@@ -15,11 +15,10 @@ home_bp = Blueprint('home', __name__, template_folder='templates')
 def home():
     conn = sqlite3.connect(Config.DATABASE)
     conn.row_factory = sqlite3.Row
-    portfolio = conn.execute('SELECT * FROM designs ORDER BY id DESC ').fetchall()
+    # جلب البيانات مباشرة لضمان عدم وجود بيانات محذوفة
+    portfolio = conn.execute('SELECT * FROM designs').fetchall() 
     conn.close()
-
-    return render_template('home.html', portfolio=portfolio,)
-
+    return render_template('home.html', portfolio=portfolio)
 
 #-----------------------------
 #عرض الطلبات

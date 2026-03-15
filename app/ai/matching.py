@@ -5,22 +5,36 @@ from config import Config
 
 def calculate_similarity(client_json, designer_json):
     total_score = 0
-    count = 0
+    total_weight=0
 
-    for category in client_json:
-        if category not in designer_json:
-            continue
 
-        for key, client_value in client_json[category].items():
-            designer_value = designer_json.get(category, {}).get(key, 0)
+      for category, fields in client_json.items():
+        # محاولة جلب الفئة مباشرة أو جلب النسخة التي تنتهي بـ _values
+        designer_category = designer_json.get(category, {})
+        if not isinstance(designer_category, dict):
+            designer_category = designer_json.get(f"{category}_values", {})
+
+        # إذا كانت الفئة لا تزال غير موجودة كـ Dictionary، نعتبرها فارغة
+        if not isinstance(designer_category, dict):
+            designer_category = {}
+
+        for key, client_value in fields.items():
+            # جلب قيمة المصمم، وإذا لم توجد نعتبرها 0
+            designer_value = designer_category.get(key, 0)
+            
+            # حساب التشابه
             similarity = 1 - abs(client_value - designer_value)
-            total_score += similarity
-            count += 1
+            
+            # إعطاء وزن أعلى (3) لنوع التصميم لأنه الأهم في المطابقة
+            weight = 3 if category == "design_type" else 1
 
-    if count == 0:
+            total_score += similarity * weight
+            total_weight += weight
+
+    if total_weight == 0:
         return 0
 
-    return round(total_score / count, 3)
+    return round(total_score / total_weight, 3)
 
 
 def match_designers(client_analysis_json, limit=3):

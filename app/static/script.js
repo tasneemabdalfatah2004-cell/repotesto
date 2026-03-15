@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const cards = Array.from(document.querySelectorAll(".portfolio-card"));
 
     // عدد الأعمال الحديثة اللي نعرضها
-    const LATEST_COUNT = 8;
+    const LATEST_COUNT = 12;
 
     function showLatest() {
         cards.forEach((card, index) => {

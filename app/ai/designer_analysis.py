@@ -17,12 +17,12 @@ client = genai.Client(api_key=GEMINI_API_KEY)
 DESIGNER_PROMPT = """
 أنت نظام ذكي لتحليل شخصية المصممين.
 
-المصدر:
-- التخصص
-- نبذة المصمم
-- طابع الأعمال
-- أسماء المشاريع
-- وصف المشاريع إن وجد
+سيتم إعطاؤك:
+- معلومات المصمم النصية
+- صور من أعماله
+
+حلل الأسلوب ونوع التصميم.
+
 
 أخرج النتيجة بصيغة JSON فقط بدون أي شرح.
 
@@ -46,20 +46,31 @@ DESIGNER_PROMPT = """
 
 """
 
-def analyze_designer(designer_text):
-    """
-    designer_text: نص شامل لكل ما ذكر أعلاه عن المصمم
-    """
-    prompt = DESIGNER_PROMPT + "\n\nالنص:\n" + designer_text
+def analyze_designer(designer_text, image_path=[]):
+    
+    parts = [
+        {"text": DESIGNER_PROMPT + "\n\nالمعلومات:\n" + designer_text}
+    ]
 
+    
+    # إضافة الصور
+    for img_path in image_path:
+        with open(img_path, "rb") as f:
+            parts.append(
+                types.Part.from_bytes(
+                    data=f.read(),
+                    mime_type="image/png"
+                )
+            )
     response = client.models.generate_content(
-        model="gemma-3-27b-it",
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            response_modalities=["TEXT"]
-        )
-    )
-
+        model="gemini-2.5-flash",
+        contents=[
+            {
+               "role": "user",
+               "parts": parts
+            }
+        ]    
+    )    
     # دمج جميع النصوص الناتجة
     output_text = ""
     for part in getattr(response, "parts", []):

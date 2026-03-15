@@ -27,7 +27,8 @@ def chat_route():
             # إرسال تحليل المستخدم للـ best_designers route
             resp = requests.post(
                 "http://127.0.0.1:5000/client/best_designers",
-                json={"user_analysis": result}
+                json={"user_analysis": result},
+                proxies={"http": None, "https": None}
             )
 
             if resp.status_code == 200:

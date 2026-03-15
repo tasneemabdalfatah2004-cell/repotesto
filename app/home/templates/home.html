@@ -30,6 +30,7 @@
 
     <div class="portfolio-grid">
         {% for work in portfolio|sort(attribute='id', reverse=True) %}
+        {% if work %}
         <div class="portfolio-card">
             <a href="{{ url_for('designer.design_details', design_id=work['id']) }}">
                 <div class="card-image">
@@ -42,6 +43,8 @@
                 </div>
             </a>
         </div>
+        {% endif %}
+
         {% endfor %}
     </div>
 </section>

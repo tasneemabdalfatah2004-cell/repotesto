@@ -78,15 +78,18 @@ def add_design():
             designer_text = f"""
                      التخصص: {specialty}
                      نبذة المصمم: {bio}
-                   نوع الأعمال: {work_type}
+                     نوع الأعمال: {work_type}
 
                      العمل الجديد:
-                    العنوان: {title}
+                     العنوان: {title}
                      الوصف: {description}
                              """
 
             try:
-                analysis_result = analyze_designer(designer_text)
+                analysis_result = analyze_designer(
+                    designer_text,
+                    image_paths=[image_path]
+                    )
 
                 cursor.execute(
                     "UPDATE users SET analysis_result=? WHERE id=?",

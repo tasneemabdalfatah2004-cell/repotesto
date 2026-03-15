@@ -33,6 +33,12 @@ def create_app():
     app.register_blueprint(client_bp, url_prefix='/client')
     app.register_blueprint(chat_bp) 
     app.register_blueprint(ai_bp, url_prefix="/ai")
+    with app.app_context():
+        try:
+            from .utils import auto_analyze_missing_designers
+            auto_analyze_missing_designers()
+        except Exception as e:
+            print(f"⚠️ فشل تشغيل المحلل التلقائي: {e}")
     return app
 
 
@@ -50,7 +56,9 @@ def init_db(app):
         bio TEXT DEFAULT '',
         specialty TEXT DEFAULT '',   
         work_type TEXT DEFAULT '',   
-        portfolio TEXT DEFAULT ''
+        portfolio TEXT DEFAULT '',
+        analysis_result TEXT DEFAULT ''
+
     )
     ''')
     c.execute('''
@@ -98,7 +106,8 @@ def add_columns_if_missing(app):
     if "work_type" not in columns:
         cursor.execute("ALTER TABLE users ADD COLUMN work_type TEXT DEFAULT ''")
         print("تم إضافة عمود work_type")
-    
+
+
     cursor.execute("PRAGMA table_info(requests);")
     req_columns = [col[1] for col in cursor.fetchall()]
 
@@ -114,6 +123,8 @@ def add_columns_if_missing(app):
             "ALTER TABLE chat_messages ADD COLUMN image_path TEXT"
         )
         print("تم إضافة عمود image_path لجدول chat_messages")    
+
+      
 
     conn.commit()
     conn.close()    
