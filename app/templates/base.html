@@ -79,12 +79,12 @@
                 </a>
             {% endif %}
 
-            <!-- زر المساعدة بالذكاء الاصطناعي -->
-            <button id="ai-button" class="ai-nav-btn">
-                🤖 مساعدة ذكية
-            </button>
 
             {% if session['role'] == 'client' %}
+                <!-- زر المساعدة بالذكاء الاصطناعي -->
+                <button id="ai-button" class="ai-nav-btn">
+                    🤖 مساعدة ذكية
+                </button>
                 <a href="{{ url_for('client.requests_view') }}">طلباتي</a>
             {% endif %}
 

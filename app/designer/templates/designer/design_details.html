@@ -259,7 +259,7 @@
                 <h4>المصمم</h4>
                 <div class="designer-profile-card">
                     <div class="designer-avatar-wrap">
-                        <img src="{{ url_for('static', filename=design['designer_avatar']) }}" alt="{{ design['designer_name'] }}">
+                        <img src="{{ url_for('static', filename=design['designer_avatar'] or 'img/profile.webp') }}" alt="{{ design['designer_name'] }}">
                     </div>
                     <a href="{{ url_for('designer.profile_view', designer_id=design['designer_id']) }}" class="designer-name">
                        {{ design['designer_name'] }}

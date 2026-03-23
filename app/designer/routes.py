@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash, abort
 import sqlite3
 import json
 import os
@@ -200,6 +200,12 @@ def design_details(design_id):
         'WHERE d.id = ?',
         (design_id,)
     ).fetchone()
+
+    # 1. حل مشكلة 'None' has no attribute:
+    # إذا لم يتم العثور على التصميم، اظهر صفحة 404 بدلاً من الخطأ
+    if design is None:
+        conn.close()
+        abort(404)
 
     # جلب كل الصور المرفقة
     images = conn.execute(

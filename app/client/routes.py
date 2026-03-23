@@ -108,18 +108,32 @@ def requests_view():
 def calculate_matching_score(user_result, designer_result):
     score = 0
     total = 0
-    for key in user_result:
+    
+    # نستخدم .items() لجعل الكود أنظف وأسرع
+    for key, user_val in user_result.items():
         if key in designer_result:
-            score += min(user_result[key], designer_result[key])
+            designer_val = designer_result[key]
+            
+            # التأكد من أن كلا القيمتين أرقام (int أو float) وليست قواميس أو نصوص
+            if isinstance(user_val, (int, float)) and isinstance(designer_val, (int, float)):
+                score += min(user_val, designer_val)
+            
+            # حالة اختيارية: إذا كان designer_val قاموساً، ربما نريد قيمة معينة بداخله؟
+            # حالياً سنتخطاها لتجنب الخطأ 500
+            elif isinstance(designer_val, dict):
+                # حاول استخراج قيمة 'score' إذا كانت موجودة داخل القاموس الفرعي
+                sub_val = designer_val.get('score', 0)
+                if isinstance(sub_val, (int, float)):
+                    score += min(user_val, sub_val)
+        
         total += 1
+    
     return score / total if total > 0 else 0
-
 
 
 @client_bp.route("/best_designers", methods=["POST"])
 def best_designers():
     try:
-        # التأكد من وصول بيانات JSON
         data = request.get_json()
         if not data or "user_analysis" not in data:
             return jsonify({"error": "لا يوجد تحليل للمستخدم."}), 400
@@ -133,35 +147,47 @@ def best_designers():
         cursor.execute("SELECT id, username, analysis_result FROM users WHERE role='designer'")
         designers = cursor.fetchall()
 
-        best_designers = []
+        best_designers_list = [] # تغيير الاسم لتجنب التداخل
         for d in designers:
             if d['analysis_result']:
-                designer_result = json.loads(d['analysis_result'])
-                score = calculate_matching_score(user_result, designer_result)
-                best_designers.append({
-                    "id": d['id'],
-                    "username": d['username'],
-                    "score": round(score*100, 2)
-                })
+                try:
+                    designer_result = json.loads(d['analysis_result'])
+                    
+                    # استدعاء دالة الحساب
+                    raw_score = calculate_matching_score(user_result, designer_result)
+                    
+                    # --- الحل هنا ---
+                    # إذا كانت الدالة تعيد قاموساً، استخرج منه الرقم. إذا كانت تعيد رقماً، استخدمه مباشرة.
+                    if isinstance(raw_score, dict):
+                        # افترضنا هنا أن المفتاح داخل القاموس هو 'score' 
+                        # قم بتغييره للمفتاح الصحيح الذي تعيده دالتك
+                        final_score = float(raw_score.get('score', 0))
+                    else:
+                        final_score = float(raw_score)
+                    
+                    best_designers_list.append({
+                        "id": d['id'],
+                        "username": d['username'],
+                        "score": round(final_score * 100, 2)
+                    })
+                except Exception as e:
+                    print(f"فشل في معالجة المصمم {d['username']}: {e}")
+                    continue
 
-        # ترتيب حسب أفضل تطابق وأخذ أفضل 3
-        best_designers = sorted(best_designers, key=lambda x: x['score'], reverse=True)[:3]
+        # الترتيب الآن سيتم بين أرقام (Floats) ولن يظهر الخطأ
+        sorted_designers = sorted(best_designers_list, key=lambda x: x['score'], reverse=True)[:3]
         conn.close()
 
-        # تجهيز قائمة ids و scores لتمريرها في الرابط
-        ids_list = [str(d['id']) for d in best_designers]
-        scores_list = [str(d['score']) for d in best_designers]
+        # تجهيز البيانات للرابط
+        ids_list = [str(d['id']) for d in sorted_designers]
+        scores_list = [str(d['score']) for d in sorted_designers]
 
-        # إنشاء الرابط للـ GET route
         get_url = url_for(
-            "client.show_best_designers",  # اسم الـ GET route
+            "client.show_best_designers",
             ids=",".join(ids_list),
             scores=",".join(scores_list)
         )
 
-        print(get_url)
-
-        # إرجاع الرابط كـ JSON
         return jsonify({"url": get_url})
 
     except Exception as e:
@@ -212,8 +238,10 @@ def show_best_designers():
                 "bio": d["bio"],
                 "specialty": d["specialty"],
                 "work_type": d["work_type"],
-                "score": id_to_score.get(d["id"], 0)  # الدرجة المرتبطة بالـ id
+                "score": id_to_score.get(d["id"], 0.0) # تأكد أنها Float
             })
+
+        designers_list.sort(key=lambda x: x['score'], reverse=True)
 
         return render_template("client/best_designers.html", designers=designers_list)
 

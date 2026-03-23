@@ -3,100 +3,208 @@
 {% block title %}أفضل المصممين{% endblock %}
 
 {% block content %}
-<div class="best-designers-wrapper">
+<style>
+    /* تحسينات بصرية عامة */
+    .art-container {
+        max-width: 1100px;
+        margin: 4rem auto;
+        padding: 0 20px;
+        direction: rtl;
+        font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+    }
 
-    <h2>أفضل 3 مصممين</h2>
-    <p>هذه قائمة المصممين الذين يتطابقون أكثر مع طلبك.</p>
+    .art-header {
+        text-align: center;
+        margin-bottom: 4rem;
+        animation: fadeInDown 0.8s ease-out;
+    }
+
+    .art-header h2 {
+        font-size: 2.8rem;
+        font-weight: 900;
+        color: #1a1a1a;
+        margin-bottom: 1rem;
+        background: linear-gradient(45deg, #1a1a1a, #4a4a4a);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .art-header p {
+        font-size: 1.1rem;
+        color: #666;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* شبكة المصممين */
+    .art-designer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2.5rem;
+        align-items: start;
+    }
+
+    /* كارت المصمم كقطعة فنية */
+    .art-card {
+        background: #ffffff;
+        border-radius: 30px;
+        padding: 3rem 2rem;
+        position: relative;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.04);
+        border: 1px solid rgba(0,0,0,0.03);
+        text-align: center;
+        overflow: hidden;
+        animation: fadeInUp 0.6s ease-out both;
+    }
+
+    /* تمييز المركز الأول */
+    .art-card:nth-child(1) {
+        border: 2px solid #ffbc00;
+        transform: scale(1.05);
+        z-index: 2;
+    }
+    .art-card:nth-child(1)::before {
+        content: "⭐ الأفضل مواءمة";
+        position: absolute;
+        top: 20px;
+        right: -30px;
+        background: #ffbc00;
+        color: #000;
+        padding: 5px 40px;
+        transform: rotate(45deg);
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+
+    .art-card:hover {
+        transform: translateY(-15px);
+        box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+    }
+
+    /* دائرة النسبة المئوية (Score) */
+    .score-circle {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 1.5rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8f9fa;
+        border: 5px solid #eee;
+        position: relative;
+    }
+
+    .score-value {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #27ae60;
+    }
+
+    .art-card h3 {
+        font-size: 1.6rem;
+        color: #1a1a1a;
+        margin-bottom: 0.5rem;
+    }
+
+    .art-specialty {
+        color: #888;
+        font-size: 0.9rem;
+        margin-bottom: 2rem;
+        display: block;
+    }
+
+    /* الأزرار الفنية */
+    .art-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .btn-main {
+        background: #1a1a1a;
+        color: #fff;
+        padding: 14px;
+        border-radius: 15px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.3s;
+        border: none;
+    }
+
+    .btn-main:hover {
+        background: #444;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-outline {
+        background: transparent;
+        color: #1a1a1a;
+        padding: 14px;
+        border-radius: 15px;
+        text-decoration: none;
+        font-weight: 600;
+        border: 2px solid #1a1a1a;
+        transition: 0.3s;
+    }
+
+    .btn-outline:hover {
+        background: #1a1a1a;
+        color: #fff;
+    }
+
+    /* الأنميشن */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* استجابة الشاشة للجوال */
+    @media (max-width: 768px) {
+        .art-card:nth-child(1) { transform: scale(1); }
+        .art-header h2 { font-size: 2rem; }
+    }
+</style>
+
+<div class="art-container">
+    <header class="art-header">
+        <h2>نخبة المصممين لك</h2>
+        <p>بناءً على تحليلاتنا المتقدمة، هؤلاء المصممين هم الأكثر قدرة على تجسيد رؤيتك الفنية.</p>
+    </header>
 
     {% if designers %}
-        <ul class="designer-list">
+        <div class="art-designer-grid">
             {% for designer in designers %}
-            <li class="designer-card">
-                <div class="designer-info">
-                    <h3>{{ designer.username }}</h3>
-                    <p>درجة التطابق: {{ designer.score }}%</p>
+            <div class="art-card" style="animation-delay: {{ loop.index0 * 0.15 }}s">
+                
+                <div class="score-circle">
+                    <span class="score-value">{{ designer.score }}%</span>
                 </div>
-                <div class="designer-actions">
-                    <a href="{{ url_for('designer.profile_view', designer_id=designer.id) }}" class="btn-view">عرض أعمال المصمم</a>
-                    <a href="{{ url_for('client.new_request') }}?designer_id={{ designer.id }}" class="btn-request">طلب تصميم مشابه</a>
-                </div>
-            </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>لم يتم العثور على أي مصممين مطابقين.</p>
-    {% endif %}
 
+                <h3>{{ designer.username }}</h3>
+                <span class="art-specialty">مصمم خبير • تطابق ذكي</span>
+
+                <div class="art-actions">
+                    <a href="{{ url_for('designer.profile_view', designer_id=designer.id) }}" class="btn-main">
+                        استكشاف معرض الأعمال
+                    </a>
+                    <a href="{{ url_for('client.new_request') }}?designer_id={{ designer.id }}" class="btn-outline">
+                        بدأ مشروع جديد
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="art-card" style="max-width: 500px; margin: 0 auto;">
+            <p>لم نتمكن من العثور على تطابقات حالياً. حاول تحديث تفضيلاتك.</p>
+        </div>
+    {% endif %}
 </div>
 
-<style>
-.best-designers-wrapper {
-    max-width: 800px;
-    margin: 40px auto;
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    padding: 0 15px;
-}
-
-.best-designers-wrapper h2 {
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-.best-designers-wrapper p {
-    text-align: center;
-    margin-bottom: 30px;
-    color: #555;
-}
-
-.designer-list {
-    list-style: none;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-}
-
-.designer-card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.designer-info h3 {
-    margin: 0 0 5px 0;
-    font-size: 18px;
-    color: #1e272e;
-}
-
-.designer-info p {
-    margin: 0;
-    color: #27ae60;
-    font-weight: bold;
-}
-
-.designer-actions {
-    margin-top: 15px;
-    display: flex;
-    justify-content: space-between;
-}
-
-.btn-view, .btn-request {
-    background: #2ecc71;
-    color: #fff;
-    padding: 10px 16px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-.btn-view:hover, .btn-request:hover {
-    background: #27ae60;
-}
-</style>
 {% endblock %}
