@@ -57,7 +57,8 @@ def init_db(app):
         specialty TEXT DEFAULT '',   
         work_type TEXT DEFAULT '',   
         portfolio TEXT DEFAULT '',
-        analysis_result TEXT DEFAULT ''
+        analysis_result TEXT DEFAULT '',
+        avatar TEXT DEFAULT NULL
 
     )
     ''')
@@ -106,6 +107,10 @@ def add_columns_if_missing(app):
     if "work_type" not in columns:
         cursor.execute("ALTER TABLE users ADD COLUMN work_type TEXT DEFAULT ''")
         print("تم إضافة عمود work_type")
+
+    if "avatar" not in columns:
+        cursor.execute("ALTER TABLE users ADD COLUMN avatar TEXT DEFAULT NULL")
+        print("تم إضافة عمود avatar")
 
 
     cursor.execute("PRAGMA table_info(requests);")

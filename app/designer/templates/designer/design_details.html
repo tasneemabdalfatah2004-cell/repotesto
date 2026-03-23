@@ -3,53 +3,279 @@
 {% block title %}تفاصيل المشروع - {{ design['title'] }}{% endblock %}
 
 {% block content %}
+<style>
+    /* Modern Artistic Styling 
+      Added scoped classes to avoid conflicting with your base theme, 
+      while elevating the look and feel of this specific page.
+    */
+    .art-design-wrapper {
+        max-width: 1200px;
+        margin: 3rem auto;
+        padding: 0 1.5rem;
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+        gap: 3rem;
+        direction: rtl; /* Maintains Arabic layout */
+    }
 
+    /* Main Content Area */
+    .art-main-content {
+        display: flex;
+        flex-direction: column;
+        gap: 2.5rem;
+    }
 
-<div class="design-details-container">
+    .art-main-image {
+        width: 100%;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+    }
 
-    <!-- العمود الرئيسي -->
-    <main class="main-content">
+    .art-main-image img {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
 
-        <!-- الصورة الرئيسية -->
-        <div class="main-image">
+    .art-main-image:hover img {
+        transform: scale(1.02);
+    }
+
+    .art-project-description {
+        background: #ffffff;
+        padding: 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    }
+
+    .art-project-description h2 {
+        margin-top: 0;
+        font-size: 2.2rem;
+        color: #1a1a1a;
+        margin-bottom: 1.2rem;
+        font-weight: 800;
+    }
+
+    .art-project-description p {
+        font-size: 1.15rem;
+        line-height: 1.8;
+        color: #555;
+    }
+
+    /* Image Gallery */
+    .art-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .art-gallery img {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        border-radius: 16px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    .art-gallery img:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+    }
+
+    /* Sticky Sidebar */
+    .art-sidebar {
+        position: sticky;
+        top: 2rem;
+        height: max-content;
+    }
+
+    .art-info-box {
+        background: #ffffff;
+        padding: 2.5rem;
+        border-radius: 24px;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.06);
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .art-info-box h4 {
+        margin: 0;
+        font-size: 1.1rem;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 0.8rem;
+    }
+
+    /* Designer Profile (Avatar + Name) */
+    .designer-profile-card {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+    }
+
+    .designer-avatar-wrap {
+        width: 75px;
+        height: 75px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 4px solid #f8f9fa;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        flex-shrink: 0;
+    }
+
+    .designer-avatar-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .designer-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #222;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .designer-name:hover {
+        color: #007bff; /* Will gracefully adapt to your primary theme color mentally */
+    }
+
+    .design-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .star-rating {
+        color: #ffb400;
+        font-size: 1.4rem;
+        letter-spacing: 3px;
+    }
+
+    .btn-artistic {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1.2rem;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    /* Lightbox Overlay */
+    #lightbox-overlay {
+        display: none;
+        position: fixed;
+        z-index: 99999;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(10, 10, 10, 0.9);
+        backdrop-filter: blur(8px);
+        align-items: center;
+        justify-content: center;
+    }
+
+    #lightbox-overlay img {
+        max-width: 85%;
+        max-height: 85vh;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes zoomIn {
+        from { transform: scale(0.9); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+
+    .lightbox-controls {
+        position: absolute;
+        color: white;
+        font-size: 3rem;
+        cursor: pointer;
+        user-select: none;
+        transition: opacity 0.2s, transform 0.2s;
+        opacity: 0.6;
+    }
+
+    .lightbox-controls:hover {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+
+    .close-lightbox { top: 30px; right: 40px; font-size: 4rem; }
+    /* Adjusted for RTL logic */
+    .prev { right: 5%; }
+    .next { left: 5%; }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .art-design-wrapper {
+            grid-template-columns: 1fr;
+        }
+        .art-sidebar {
+            position: static;
+        }
+    }
+</style>
+
+<div class="art-design-wrapper">
+
+    <main class="art-main-content">
+
+        <div class="art-main-image">
             <img src="{{ url_for('static', filename=design['image_path']) }}" alt="{{ design['title'] }}">
         </div>
 
-        <!-- وصف المشروع -->
-        <div class="project-description">
+        <div class="art-project-description">
             <h2>{{ design['title'] }}</h2>
             <p>{{ design['description'] }}</p>
         </div>
 
-        <!-- الصور المرفقة -->
-        <div class="attached-images">
+        <div class="art-gallery">
             {% for img in images %}
                 <img src="{{ url_for('static', filename=img['image_path']) }}" 
-                     alt="{{ design['title'] }}" class="thumbnail">
+                     alt="{{ design['title'] }} - صورة مرفقة" class="thumbnail">
             {% endfor %}
         </div>
 
     </main>
 
-    <!-- العمود الجانبي -->
-    <aside class="sidebar">
+    <aside class="art-sidebar">
 
-        <!-- معلومات المصمم -->
-        <div class="info-box">
-            <h4>المصمم</h4>
-            <a href="{{ url_for('designer.profile_view', designer_id=design['designer_id']) }}" class="designer-name">
-               {{ design['designer_name'] }}
-            </a>
+        <div class="art-info-box">
+            
+            <div>
+                <h4>المصمم</h4>
+                <div class="designer-profile-card">
+                    <div class="designer-avatar-wrap">
+                        <img src="{{ url_for('static', filename=design['designer_avatar']) }}" alt="{{ design['designer_name'] }}">
+                    </div>
+                    <a href="{{ url_for('designer.profile_view', designer_id=design['designer_id']) }}" class="designer-name">
+                       {{ design['designer_name'] }}
+                    </a>
+                </div>
+            </div>
 
-            <h4>معلومات المشروع</h4>
-            <div class="design-info">
-                <p>التقييم: 
+            <div class="design-meta">
+                <h4>معلومات المشروع</h4>
+                <p style="margin: 0.5rem 0; font-size: 1.1rem; color: #555;">التقييم: 
                     <span class="star-rating">★★★★☆</span>
                 </p>
             </div>
 
             <a href="{{ url_for('client.new_request') }}?design_id={{ design['id'] }}&designer_id={{ design['designer_id'] }}"
-               class="btn btn-primary">
+               class="btn btn-primary btn-artistic">
                 طلب تصميم مشابه
             </a>
         </div>
@@ -58,22 +284,23 @@
 
 </div>
 
-<!-- Lightbox Overlay -->
 <div id="lightbox-overlay">
-    <span class="close-lightbox">&times;</span>
-    <span class="next">&lt;</span>
-    <span class="prev">&gt;</span>
+    <span class="lightbox-controls close-lightbox">&times;</span>
+    <span class="lightbox-controls next">&lt;</span>
+    <span class="lightbox-controls prev">&gt;</span>
     <img src="" alt="Project Image">
 </div>
+
 <script>
-// ====== Lightbox Functionality ======
+// ====== Enhanced Lightbox Functionality ======
 document.addEventListener("DOMContentLoaded", function () {
     const overlay = document.getElementById('lightbox-overlay');
     const overlayImg = overlay.querySelector('img');
     const closeBtn = overlay.querySelector('.close-lightbox');
     const prevBtn = overlay.querySelector('.prev');
     const nextBtn = overlay.querySelector('.next');
-    const thumbnails = Array.from(document.querySelectorAll('.attached-images .thumbnail'));
+    // Updated selector to match the new gallery classes
+    const thumbnails = Array.from(document.querySelectorAll('.art-gallery .thumbnail'));
 
     let currentIndex = 0;
 
@@ -81,7 +308,14 @@ document.addEventListener("DOMContentLoaded", function () {
         if (index < 0) index = thumbnails.length - 1;
         if (index >= thumbnails.length) index = 0;
         currentIndex = index;
-        overlayImg.src = thumbnails[currentIndex].src;
+        
+        // Brief fade effect for smoother transitions
+        overlayImg.style.opacity = 0;
+        setTimeout(() => {
+            overlayImg.src = thumbnails[currentIndex].src;
+            overlayImg.style.opacity = 1;
+        }, 150);
+        
         overlay.style.display = 'flex';
     }
 
@@ -95,17 +329,29 @@ document.addEventListener("DOMContentLoaded", function () {
         overlay.style.display = 'none';
     });
 
-    prevBtn.addEventListener('click', () => {
+    // Note: Adjusted for RTL (Arabic reading direction)
+    prevBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
         showImage(currentIndex - 1);
     });
 
-    nextBtn.addEventListener('click', () => {
+    nextBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
         showImage(currentIndex + 1);
     });
 
-    // اغلاق عند الضغط على الخلفية
+    // Close when clicking the background overlay
     overlay.addEventListener('click', e => {
         if (e.target === overlay) overlay.style.display = 'none';
+    });
+    
+    // Allow keyboard navigation (Escape, Left Arrow, Right Arrow)
+    document.addEventListener('keydown', (e) => {
+        if (overlay.style.display === 'flex') {
+            if (e.key === 'Escape') overlay.style.display = 'none';
+            if (e.key === 'ArrowRight') showImage(currentIndex - 1); // RTL
+            if (e.key === 'ArrowLeft') showImage(currentIndex + 1);  // RTL
+        }
     });
 });
 </script>

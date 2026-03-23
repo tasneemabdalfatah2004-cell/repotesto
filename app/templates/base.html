@@ -67,14 +67,17 @@
 
         <div class="nav-left">
             <a href="/" class="logo">منصتي</a>
+            <span>أهلًا بك {{ session['username'] }}</span>
         </div>
 
         <div class="nav-center">
             <a href="{{ url_for('home.home') }}">الصفحة الرئيسية</a>
 
-            <a href="{{ url_for('client.profile') if session['role'] == 'client' else url_for('designer.profile') }}">
-                الملف الشخصي
-            </a>
+            {% if session['role'] == 'designer' %}
+                <a href="{{ url_for('client.profile') if session['role'] == 'client' else url_for('designer.profile') }}">
+                    الملف الشخصي
+                </a>
+            {% endif %}
 
             <!-- زر المساعدة بالذكاء الاصطناعي -->
             <button id="ai-button" class="ai-nav-btn">
@@ -92,7 +95,11 @@
         </div>
 
         <div class="nav-right">
-            <a href="{{ url_for('auth.login') }}" class="btn-logout">تسجيل دخول</a>
+            {% if session['role'] == '' %}
+                <a href="{{ url_for('auth.login') }}" class="btn-logout">تسجيل دخول</a>
+            {% else %}
+                <a href="{{ url_for('auth.logout') }}">تسجيل خروج</a>
+            {% endif %}
         </div>
 
     </div>

@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
             tab.classList.add("active");
 
             if (tab.dataset.filter === "latest") {
-                showLatest();
+                showAll();
             } else if (tab.dataset.filter === "all") {
                 showAll();
             }
@@ -43,5 +43,5 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // افتراضيًا: عرض أحدث الأعمال
-    showLatest();
+    showAll();
 });

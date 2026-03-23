@@ -7,7 +7,8 @@
 <!-- ================= PROFILE HEADER ================= -->
 <section class="profile-header">
     <div class="profile-avatar">
-        <img src="{{ url_for('static', filename=designer['avatar'] if designer['avatar'] else 'img/profile.webp') }}"
+        <img id="avatarPreview"
+             src="{{ url_for('static', filename=designer['avatar'] if designer['avatar'] else 'img/profile.webp') }}"
              alt="{{ designer['username'] }}">
     </div>
 
@@ -23,15 +24,22 @@
 
     <!-- ===== ABOUT ===== -->
     <div class="profile-box">
-        <h3>نبذة عني</h3>
-        <form method="POST">
+        <h3>الصورة الشخصية</h3>
+
+        <form method="POST" enctype="multipart/form-data">
+            <div style="margin-bottom: 20px;">
+                <label style="display:block; margin-bottom: 8px;">تغيير الصورة الشخصية:</label>
+                <input type="file" name="avatar" class="input-field" accept="image/*" onchange="previewAvatar(event)">
+            </div>
+
+            <h3>نبذة عني</h3>
             <textarea name="bio" rows="5" class="bio-textarea" placeholder="اكتب نبذة عنك هنا...">{{ designer['bio'] }}</textarea>
 
             <label>تخصصي:</label>
             <input type="text" name="specialty" class="input-field" placeholder="مثال: تصميم شعارات وهويات بصرية" value="{{ designer['specialty'] }}">
 
-              <h3>طابع أعمالي</h3>
-        <textarea name="work_type" rows="5" class="bio-textarea" placeholder="صف طابع أعمالك هنا...">{{ designer['work_type'] }}</textarea>
+            <h3>طابع أعمالي</h3>
+            <textarea name="work_type" rows="5" class="bio-textarea" placeholder="صف طابع أعمالك هنا...">{{ designer['work_type'] }}</textarea>
 
             <button type="submit" class="btn-save">حفظ التغييرات</button>
         </form>
@@ -61,5 +69,16 @@
     </div>
 
 </section>
+
+<script>
+function previewAvatar(event) {
+    const input = event.target;
+    const preview = document.getElementById('avatarPreview');
+
+    if (input.files && input.files[0]) {
+        preview.src = URL.createObjectURL(input.files[0]);
+    }
+}
+</script>
 
 {% endblock %}

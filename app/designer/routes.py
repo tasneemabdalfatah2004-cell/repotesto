@@ -121,19 +121,49 @@ def profile():
     cursor = conn.cursor()
 
     if request.method == 'POST':
-        # حقل username لا نعدله لأنه مُحدد عند التسجيل
         bio = request.form.get('bio', '')
         specialty = request.form.get('specialty', '')
         work_type = request.form.get('work_type', '')
 
-        cursor.execute(
-            '''
-            UPDATE users
-            SET bio = ?, specialty = ?, work_type = ?
-            WHERE id = ?
-            ''',
-            (bio, specialty, work_type, session['user_id'])
-        )
+        avatar_file = request.files.get('avatar')
+        avatar_path = None
+
+        if avatar_file and avatar_file.filename:
+            if '.' not in avatar_file.filename:
+                flash('صيغة الصورة غير صالحة')
+                conn.close()
+                return redirect(request.url)
+
+            ext = avatar_file.filename.rsplit('.', 1)[1].lower()
+            if ext not in Config.ALLOWED_EXTENSIONS:
+                flash('صيغة الصورة غير مدعومة')
+                conn.close()
+                return redirect(request.url)
+
+            unique_filename = f"{uuid.uuid4().hex}.{ext}"
+            filepath = os.path.join(Config.UPLOAD_FOLDER, unique_filename)
+            avatar_file.save(filepath)
+            avatar_path = f"uploads/{unique_filename}"
+
+        if avatar_path:
+            cursor.execute(
+                '''
+                UPDATE users
+                SET bio = ?, specialty = ?, work_type = ?, avatar = ?
+                WHERE id = ?
+                ''',
+                (bio, specialty, work_type, avatar_path, session['user_id'])
+            )
+        else:
+            cursor.execute(
+                '''
+                UPDATE users
+                SET bio = ?, specialty = ?, work_type = ?
+                WHERE id = ?
+                ''',
+                (bio, specialty, work_type, session['user_id'])
+            )
+
         conn.commit()
         flash('تم حفظ التغييرات بنجاح!')
 
@@ -164,7 +194,8 @@ def design_details(design_id):
 
     # جلب بيانات المشروع
     design = conn.execute(
-        'SELECT d.*, u.username as designer_name FROM designs d '
+        'SELECT d.*, u.username as designer_name, u.avatar as designer_avatar '
+        'FROM designs d '
         'JOIN users u ON d.designer_id = u.id '
         'WHERE d.id = ?',
         (design_id,)

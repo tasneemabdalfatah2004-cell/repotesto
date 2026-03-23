@@ -4,7 +4,6 @@
 
 {% block content %}
 
-
 <!-- ================= HERO SECTION ================= -->
 <section class="hero">
     <div class="hero-overlay">
@@ -22,16 +21,12 @@
 <section class="portfolio-section">
     <div class="section-header">
         <h2>أعمال المصممين</h2>
-        <div class="works-tabs">
-            <span class="tab active" data-filter="latest">أحدث الأعمال</span>
-            <span class="tab" data-filter="all">جميع الأعمال</span>
-        </div>
     </div>
 
-    <div class="portfolio-grid">
+    <div class="portfolio-grid" id="portfolioGrid">
         {% for work in portfolio|sort(attribute='id', reverse=True) %}
         {% if work %}
-        <div class="portfolio-card">
+        <div class="portfolio-card portfolio-item">
             <a href="{{ url_for('designer.design_details', design_id=work['id']) }}">
                 <div class="card-image">
                     <img src="{{ url_for('static', filename=work['image_path'].split('static/')[-1]) }}"
@@ -44,9 +39,59 @@
             </a>
         </div>
         {% endif %}
-
         {% endfor %}
     </div>
+
+    <!-- Load More Button -->
+    <div style="text-align:center; margin-top: 30px;">
+        <button id="loadMoreBtn" class="btn-load-more">عرض المزيد</button>
+    </div>
 </section>
+
+<style>
+.btn-load-more {
+    padding: 12px 24px;
+    background: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.btn-load-more:hover {
+    opacity: 0.85;
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const items = document.querySelectorAll(".portfolio-item");
+    console.log(items.length)
+    const loadMoreBtn = document.getElementById("loadMoreBtn");
+
+    let visibleCount = 8; // عدد العناصر التي تظهر أولاً
+
+    function showItems() {
+        items.forEach((item, index) => {
+            console.log(items.length)
+            item.style.display = index < visibleCount ? "block" : "none";
+        });
+
+        // إخفاء الزر إذا انتهت العناصر
+        if (visibleCount >= items.length) {
+            loadMoreBtn.style.display = "none";
+        }
+    }
+
+    loadMoreBtn.addEventListener("click", function () {
+        visibleCount += 8; // كل ضغطة تظهر 8 عناصر إضافية
+        showItems();
+    });
+
+    showItems(); // أول تحميل
+});
+</script>
 
 {% endblock %}

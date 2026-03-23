@@ -18,7 +18,7 @@ def dashboard_admin():
     conn = sqlite3.connect(Config.DATABASE)
     conn.row_factory = sqlite3.Row
 
-    users = conn.execute("SELECT * FROM users").fetchall()
+    users = conn.execute("SELECT * FROM users WHERE role='client'").fetchall()
     
     # الإحصائيات
     users_count = conn.execute("SELECT COUNT(*) FROM users").fetchone()[0]
@@ -33,6 +33,84 @@ def dashboard_admin():
     return render_template(
         "admin/dashboard_admin.html",
         users=users,
+        users_count=users_count,
+        designers_count=designers_count,
+        clients_count=clients_count, # مررناها لهون
+        requests_count=requests_count,
+        designs_count=designs_count
+    )
+
+# ----------------------------
+# لوحة تحكم المدير مصممين
+# ----------------------------
+@admin_bp.route('/designers')
+def dashboard_admin_designers():
+    if 'role' not in session or session['role'] != 'admin':
+        flash('غير مسموح بالدخول!')
+        return redirect(url_for('auth.login'))
+
+    conn = sqlite3.connect(Config.DATABASE)
+    conn.row_factory = sqlite3.Row
+
+    users = conn.execute("SELECT * FROM users WHERE role='designer'").fetchall()
+    
+    # الإحصائيات
+    users_count = conn.execute("SELECT COUNT(*) FROM users").fetchone()[0]
+    designers_count = conn.execute("SELECT COUNT(*) FROM users WHERE role='designer'").fetchone()[0]
+    # إضافة حساب العملاء
+    clients_count = conn.execute("SELECT COUNT(*) FROM users WHERE role='client'").fetchone()[0]
+    requests_count = conn.execute("SELECT COUNT(*) FROM requests").fetchone()[0]
+    designs_count = conn.execute("SELECT COUNT(*) FROM designs").fetchone()[0]
+
+    conn.close()
+
+    return render_template(
+        "admin/dashboard_admin_designers.html",
+        users=users,
+        users_count=users_count,
+        designers_count=designers_count,
+        clients_count=clients_count, # مررناها لهون
+        requests_count=requests_count,
+        designs_count=designs_count
+    )
+
+# ----------------------------
+# لوحة تحكم المدير طلبات'
+# ----------------------------
+@admin_bp.route('/requests')
+def dashboard_admin_requests():
+    if 'role' not in session or session['role'] != 'admin':
+        flash('غير مسموح بالدخول!')
+        return redirect(url_for('auth.login'))
+
+    conn = sqlite3.connect(Config.DATABASE)
+    conn.row_factory = sqlite3.Row
+
+    requests = conn.execute("""
+        SELECT 
+            r.*,
+            client.username AS client_username,
+            designer.username AS designer_username,
+            d.title AS design_title
+        FROM requests r
+        JOIN users client ON r.client_id = client.id
+        JOIN users designer ON r.designer_id = designer.id
+        JOIN designs d ON r.design_id = d.id;
+        """).fetchall()
+    
+    # الإحصائيات
+    users_count = conn.execute("SELECT COUNT(*) FROM users").fetchone()[0]
+    designers_count = conn.execute("SELECT COUNT(*) FROM users WHERE role='designer'").fetchone()[0]
+    # إضافة حساب العملاء
+    clients_count = conn.execute("SELECT COUNT(*) FROM users WHERE role='client'").fetchone()[0]
+    requests_count = conn.execute("SELECT COUNT(*) FROM requests").fetchone()[0]
+    designs_count = conn.execute("SELECT COUNT(*) FROM designs").fetchone()[0]
+
+    conn.close()
+
+    return render_template(
+        "admin/dashboard_admin_requests.html",
+        requests=requests,
         users_count=users_count,
         designers_count=designers_count,
         clients_count=clients_count, # مررناها لهون
@@ -84,6 +162,30 @@ def delete_user(user_id):
 
     flash('تم حذف المستخدم')
     return redirect(url_for('admin.dashboard_admin'))
+
+
+
+# ----------------------------
+# حذف طلب'
+# ----------------------------
+@admin_bp.route('/delete_request/<int:request_id>')
+def delete_request(request_id):
+
+    if 'role' not in session or session['role'] != 'admin':
+        return redirect(url_for('auth.login'))
+
+    conn = sqlite3.connect(Config.DATABASE)
+
+    conn.execute(
+        'DELETE FROM requests WHERE id=?',
+        (request_id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+    flash('تم حذف الطلب')
+    return redirect(url_for('admin.dashboard_admin_requests'))
 
 
 # ----------------------------
