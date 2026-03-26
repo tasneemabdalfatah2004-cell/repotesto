@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, sessio
 import sqlite3
 import json
 from config import Config
+import math
 
 client_bp = Blueprint('client', __name__, template_folder='templates')
 
@@ -105,30 +106,87 @@ def requests_view():
 
     conn.close()
     return render_template('client/client_requests.html', requests=requests)   
+
+def category_similarity(user_values, designer_values):
+    """
+    Similarity داخل كل category.
+    نقيس overlap مقارنة بما طلبه المستخدم.
+    """
+    keys = set(user_values.keys()) | set(designer_values.keys())
+    user_total = sum(float(user_values.get(k, 0)) for k in keys)
+    
+    if user_total == 0:
+        return 0.0
+
+    overlap = sum(
+        min(float(user_values.get(k, 0)), float(designer_values.get(k, 0)))
+        for k in keys
+    )
+
+    return overlap / user_total
+
+
 def calculate_matching_score(user_result, designer_result):
-    score = 0
-    total = 0
-    
-    # نستخدم .items() لجعل الكود أنظف وأسرع
-    for key, user_val in user_result.items():
-        if key in designer_result:
-            designer_val = designer_result[key]
-            
-            # التأكد من أن كلا القيمتين أرقام (int أو float) وليست قواميس أو نصوص
-            if isinstance(user_val, (int, float)) and isinstance(designer_val, (int, float)):
-                score += min(user_val, designer_val)
-            
-            # حالة اختيارية: إذا كان designer_val قاموساً، ربما نريد قيمة معينة بداخله؟
-            # حالياً سنتخطاها لتجنب الخطأ 500
-            elif isinstance(designer_val, dict):
-                # حاول استخراج قيمة 'score' إذا كانت موجودة داخل القاموس الفرعي
-                sub_val = designer_val.get('score', 0)
-                if isinstance(sub_val, (int, float)):
-                    score += min(user_val, sub_val)
-        
-        total += 1
-    
-    return score / total if total > 0 else 0
+    weights = {
+        "design_type": 10.0,   # أهم 10 مرات
+        "sub_type": 1.0,
+        "style": 1.0,
+        "colors/mood": 1.0,
+        "colors_mood": 1.0,
+        "audience": 1.0,
+        "project_field": 1.0,
+        "platform_or_usage": 1.0,
+        "special_requirements": 1.0,
+    }
+
+    total_weight = 0.0
+    weighted_score = 0.0
+
+    for category, user_values in user_result.items():
+        designer_values = designer_result.get(category)
+
+        if designer_values is None and category == "colors/mood":
+            designer_values = designer_result.get("colors_mood", {})
+
+        if not isinstance(user_values, dict) or not isinstance(designer_values, dict):
+            continue
+
+        sim = category_similarity(user_values, designer_values)
+        weight = weights.get(category, 1.0)
+
+        weighted_score += sim * weight
+        total_weight += weight
+
+    return weighted_score / total_weight if total_weight > 0 else 0.0
+
+
+def smart_scale_scores(raw_scores, min_pct=5, max_pct=95):
+    """
+    نعيد توزيع النتائج حسب ترتيبها داخل المجموعة.
+    هذا ليس hard-coded على 1=95 و2=75 و3=50،
+    بل حسب rank + curve ناعمة.
+    """
+    n = len(raw_scores)
+    if n == 0:
+        return []
+
+    if n == 1:
+        return [round(max_pct, 2)]
+
+    ranked = sorted(enumerate(raw_scores), key=lambda x: x[1], reverse=True)
+    final_scores = [0.0] * n
+
+    # منحنى ناعم: الأفضل يأخذ قيمة أعلى بشكل واضح
+    # وكلما زاد عدد المرشحين، تصبح التوزيعة أكثر توازنًا
+    gamma = 0.85 + (0.35 / math.log(n + 1.5))
+
+    for rank, (idx, _) in enumerate(ranked):
+        p = 1 - (rank / (n - 1))   # الأفضل = 1 ، الأسوأ = 0
+        curved = p ** gamma
+        curved = curved * curved * (3 - 2 * curved)  # smoothstep
+        final_scores[idx] = min_pct + curved * (max_pct - min_pct)
+
+    return [round(max(min_pct, min(max_pct, s)), 2) for s in final_scores]
 
 
 @client_bp.route("/best_designers", methods=["POST"])
@@ -154,16 +212,11 @@ def best_designers():
                     designer_result = json.loads(d['analysis_result'])
                     
                     # استدعاء دالة الحساب
-                    raw_score = calculate_matching_score(user_result, designer_result)
-                    
-                    # --- الحل هنا ---
-                    # إذا كانت الدالة تعيد قاموساً، استخرج منه الرقم. إذا كانت تعيد رقماً، استخدمه مباشرة.
-                    if isinstance(raw_score, dict):
-                        # افترضنا هنا أن المفتاح داخل القاموس هو 'score' 
-                        # قم بتغييره للمفتاح الصحيح الذي تعيده دالتك
-                        final_score = float(raw_score.get('score', 0))
-                    else:
-                        final_score = float(raw_score)
+                    print("user_result")
+                    print(user_result)
+                    print("designer_result")
+                    print(designer_result)
+                    final_score = calculate_matching_score(user_result, designer_result)
                     
                     best_designers_list.append({
                         "id": d['id'],

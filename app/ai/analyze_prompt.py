@@ -34,6 +34,11 @@ EXTRACT_PROMPT = """
 **project_field**: education, technology, healthcare, real_estate, ecommerce, finance, food, fashion, entertainment, nonprofit
 **platform_or_usage**: mobile_app, web_app, dashboard, landing_page, social_media, print, presentation
 **special_requirements**: responsive, animation, branding_guidelines, accessibility, multilanguage, fast_loading, seo_friendly
+مثال عن شكل الخرج
+{
+"design_type": {"logo": 1.0, "poster": 0.0, "mockup": 0.0, "ui": 0.0, "visual_identity": 0.0, "banner": 0.0, "social_post": 0.0, "flyer": 0.0, "brochure": 0.0, "packaging": 0.0}
+نفس الشيء بالنسبة ل sub_type وباقي الخيارات
+}
 
 """
 
@@ -101,6 +106,7 @@ def analyze_conversation(conversation_history, is_local=False):
                     return None
 
                 json_text = match.group()
+                print(json_text)
                 return json.loads(json_text)
             except json.JSONDecodeError:
                 print("تعذر تحليل إخراج Gemini API إلى JSON. الإخراج الخام:")
