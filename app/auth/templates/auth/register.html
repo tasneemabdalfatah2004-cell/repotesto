@@ -19,4 +19,119 @@
     </form>
     <p>لديك حساب؟ <a href="{{ url_for('auth.login') }}">تسجيل الدخول</a></p>
 </div>
+<style>
+ 
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', 'Cairo', Tahoma, sans-serif; /* أضفت Cairo إذا كانت متوفرة */
+    margin: 0;
+    direction: rtl;
+}
+
+.register-container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+}
+
+.register-container h2 {
+    color: #2d3436;
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+/* تنسيق حقول الإدخال والقائمة المنسدلة */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
+    width: 100%;
+    padding: 14px;
+    margin: 12px 0;
+    border: 1.5px solid #eee;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+/* تمييز القائمة المنسدلة (الدور) */
+select {
+    cursor: pointer;
+    appearance: none; /* إخفاء السهم الافتراضي لعمل سهم أجمل */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: left 15px center; /* وضع السهم لجهة اليسار لأن النص يمين */
+    background-size: 15px;
+}
+
+input:focus, select:focus {
+    border-color: #764ba2;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(118, 75, 162, 0.1);
+    outline: none;
+}
+
+/* تسمية "اختر الدور" */
+label {
+    display: block;
+    text-align: right;
+    margin-bottom: -5px;
+    margin-right: 5px;
+    font-size: 0.85rem;
+    color: #636e72;
+    font-weight: 600;
+}
+
+/* زر إنشاء الحساب */
+button {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(118, 75, 162, 0.3);
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(118, 75, 162, 0.4);
+    filter: brightness(1.1);
+}
+
+/* رابط تسجيل الدخول */
+.login-link {
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+    font-size: 0.9rem;
+    color: #636e72;
+}
+
+.login-link a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}   
+</style>
 {% endblock %}

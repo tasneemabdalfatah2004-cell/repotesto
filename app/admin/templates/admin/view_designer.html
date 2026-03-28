@@ -109,40 +109,26 @@ background:#2980b9;
 
 </style>
 
-
 <div class="container">
 
 <h2 class="page-title">
 إدارة أعمال المصمم: {{ designer.username }}
 </h2>
-
-
 <div class="designer-info">
-
 <p><b>البريد:</b> {{ designer.email }}</p>
-
 <p><b>التخصص:</b> {{ designer.specialty }}</p>
-
 </div>
-
-
 <div class="design-grid">
-
 {% for design in designs %}
-
 <div class="design-card">
-
 <img
 src="{{ url_for('static', filename=design.image_path) }}"
 class="design-image"
 >
-
 <div class="design-body">
-
 <div class="design-title">
 {{ design.title }}
 </div>
-
 <a
 href="{{ url_for('admin.delete_design', design_id=design.id) }}"
 class="delete-btn"
@@ -150,7 +136,6 @@ onclick="return confirm('هل تريد حذف التصميم؟')"
 >
 حذف التصميم
 </a>
-
 </div>
 
 </div>

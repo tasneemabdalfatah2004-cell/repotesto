@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
     <style>
-        /* زر الذكاء الاصطناعي داخل الـ nav */
         .ai-nav-btn {
             background: none;
             border: none;
@@ -17,15 +16,14 @@
             font-size: 15px;
             cursor: pointer;
             margin: 0 10px;
-            position: relative; /* مهم */
-            z-index: 10;       /* أهم شي */
+            position: relative;
+            z-index: 10;
         }
 
         .ai-nav-btn:hover {
             text-decoration: underline;
         }
 
-        /* صندوق الشات */
         #chat-box {
             display: none;
             position: fixed;
@@ -67,35 +65,36 @@
 
         <div class="nav-left">
             <a href="/" class="logo">منصتي</a>
-            <span>أهلًا بك {{ session['username'] }}</span>
+
+            {% if session.get('username') %}
+                <span>أهلًا بك {{ session.get('username') }}</span>
+            {% else %}
+                <span>أهلًا بك زائر</span>
+            {% endif %}
         </div>
 
         <div class="nav-center">
             <a href="{{ url_for('home.home') }}">الصفحة الرئيسية</a>
 
-            {% if session['role'] == 'designer' %}
-                <a href="{{ url_for('client.profile') if session['role'] == 'client' else url_for('designer.profile') }}">
-                    الملف الشخصي
-                </a>
+            {% if session.get('role') == 'designer' %}
+                <a href="{{ url_for('designer.profile') }}">الملف الشخصي</a>
             {% endif %}
 
-
-            {% if session['role'] == 'client' %}
-                <!-- زر المساعدة بالذكاء الاصطناعي -->
+            {% if session.get('role') == 'client' %}
                 <button id="ai-button" class="ai-nav-btn">
                     🤖 مساعدة ذكية
                 </button>
                 <a href="{{ url_for('client.requests_view') }}">طلباتي</a>
             {% endif %}
 
-            {% if session['role'] == 'designer' %}
+            {% if session.get('role') == 'designer' %}
                 <a href="{{ url_for('designer.add_design') }}">إضافة عمل</a>
                 <a href="{{ url_for('designer.designer_requests') }}">الطلبات</a>
             {% endif %}
         </div>
 
         <div class="nav-right">
-            {% if session['role'] == '' %}
+            {% if not session.get('role') %}
                 <a href="{{ url_for('auth.login') }}" class="btn-logout">تسجيل دخول</a>
             {% else %}
                 <a href="{{ url_for('auth.logout') }}">تسجيل خروج</a>

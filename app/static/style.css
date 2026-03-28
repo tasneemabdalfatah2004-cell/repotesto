@@ -15,43 +15,74 @@ img {
     object-fit: cover !important;
 }
 
-/* login / register */
+/* login / register - النسخة المحدثة */
 .login-container {
     width: 350px;
     margin: 80px auto;
     padding: 30px;
     background: #fff;
     border-radius: 10px;
-    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1); /* ظل أنعم وأوضح */
+    direction: rtl; /* لضمان ترتيب العناصر بشكل صحيح للعربية */
 }
 
 .login-container h2 {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    color: #333;
 }
 
 .login-container input,
 .login-container select,
 .login-container textarea {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin-bottom: 15px;
-    border-radius: 5px;
+    border-radius: 8px; /* حواف أنعم */
     border: 1px solid #ccc;
+    box-sizing: border-box; /* يمنع خروج الحقول عن عرض الحاوية */
+    transition: all 0.3s ease;
+}
+
+/* تأثير عند الضغط على الحقول */
+.login-container input:focus {
+    border-color: #6b5ba6;
+    outline: none;
+    box-shadow: 0 0 5px rgba(107, 91, 166, 0.2);
+}
+
+/* تنسيق خانة "تذكرني" الجديدة */
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #555;
+    cursor: pointer;
+}
+
+.remember-me input {
+    width: auto; /* لضمان عدم تمدد الـ checkbox */
+    margin-bottom: 0;
+    cursor: pointer;
 }
 
 .login-container button {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     background-color: #6b5ba6;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .login-container button:hover {
-    background-color: #6b5ba6;
+    background-color: #56498a; /* لون أغمق قليلاً عند التمرير */
 }
 
 .login-container a {
@@ -59,16 +90,25 @@ img {
     text-decoration: none;
     display: block;
     text-align: center;
-    margin-top: 10px;
+    margin-top: 15px;
+    font-size: 14px;
 }
 
+.login-container a:hover {
+    text-decoration: underline;
+}
+
+/* رسائل الفلاش */
 .flash-messages {
     list-style: none;
-    margin-bottom: 10px;
-    color: red;
+    padding: 10px;
+    margin-bottom: 15px;
+    color: #d63031;
+    background-color: #fab1a033;
+    border-radius: 5px;
+    font-size: 13px;
     text-align: center;
 }
-
 /* لوحة المدير */
 .dashboard-container {
     width: 90%;

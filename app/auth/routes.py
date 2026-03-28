@@ -14,6 +14,7 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
+        remember = request.form.get('remember')
         conn = sqlite3.connect(Config.DATABASE)
         conn.row_factory = sqlite3.Row
         user = conn.execute('SELECT * FROM users WHERE email=?', (email,)).fetchone()
@@ -23,10 +24,11 @@ def login():
             if user['active'] == 0:
                 flash('حسابك معطل من قبل المدير.')
                 return redirect(url_for('auth.login'))
-
+            session.permanent = True 
             session['user_id'] = user['id']
             session['role'] = user['role']
             session['username'] = user['username']
+            session['email'] = user['email'] 
             flash('تم تسجيل الدخول بنجاح!')
 
             # إعادة التوجيه حسب الدور
