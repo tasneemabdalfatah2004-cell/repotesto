@@ -9,6 +9,7 @@ conversation_history = []
 
 @ai_bp.route("/chat", methods=["POST"])
 def chat_route():
+    global conversation_history
     try:
         user_msg = request.json.get("message")
         if not user_msg:
@@ -17,12 +18,15 @@ def chat_route():
         conversation_history.append(("المستخدم", user_msg))
         ai_reply = run_ai_chat(conversation_history, False)
         conversation_history.append(("الذكاء", ai_reply))
-        finished = "أصبحت لدي صورة واضحة" in ai_reply
+        finished = ("أصبحت لدي صورة واضحة" in ai_reply) or len(conversation_history) > 6
         best_designers_url = ""
+        print("len(conversation_history)")
+        print(len(conversation_history))
 
         if finished:
             # تحليل المحادثة
             result = analyze_conversation(conversation_history, False)
+            conversation_history = []
 
             # إرسال تحليل المستخدم للـ best_designers route
             resp = requests.post(

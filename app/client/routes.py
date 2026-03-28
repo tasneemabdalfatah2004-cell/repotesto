@@ -212,10 +212,6 @@ def best_designers():
                     designer_result = json.loads(d['analysis_result'])
                     
                     # استدعاء دالة الحساب
-                    print("user_result")
-                    print(user_result)
-                    print("designer_result")
-                    print(designer_result)
                     final_score = calculate_matching_score(user_result, designer_result)
                     
                     best_designers_list.append({
