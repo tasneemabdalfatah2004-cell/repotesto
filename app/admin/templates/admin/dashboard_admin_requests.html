@@ -196,7 +196,7 @@ body {
                         <td>#{{ request.id }}</td>
                         <td class="client">{{ request.client_username }}</td>
                         <td class="designer">{{ request.designer_username }}</td>
-                        <td class="design">{{ request.design_title }}</td>
+                        <td class="design">{{ request.design_title or 'لا يوجد تصميم مشابه'}}</td>
                         <td>
                             <div class="btn-group">
                                 <a href="{{ url_for('admin.delete_request', request_id=request.id) }}" class="btn-icon delete" onclick="return confirm('Confirm Delete?')">

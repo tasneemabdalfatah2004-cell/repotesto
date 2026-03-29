@@ -93,9 +93,9 @@ def dashboard_admin_requests():
             designer.username AS designer_username,
             d.title AS design_title
         FROM requests r
-        JOIN users client ON r.client_id = client.id
-        JOIN users designer ON r.designer_id = designer.id
-        JOIN designs d ON r.design_id = d.id;
+        LEFT JOIN users client ON r.client_id = client.id
+        LEFT JOIN users designer ON r.designer_id = designer.id
+        LEFT JOIN designs d ON r.design_id = d.id;
         """).fetchall()
     
     # الإحصائيات
